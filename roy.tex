@@ -15,6 +15,11 @@
 \DeclareMathOperator{\isContr}{isContr}
 \DeclareMathOperator{\isProp}{isProp}
 \DeclareMathOperator{\isSet}{isSet}
+\DeclareMathOperator{\dom}{dom}
+\DeclareMathOperator{\cod}{cod}
+\DeclareMathOperator{\qinv}{qinv}
+\DeclareMathOperator{\binv}{binv}
+\DeclareMathOperator{\isEquiv}{isEquiv}
 
 \newcommand{\set}[1]{\{\,#1\,\}}
 
@@ -45,7 +50,8 @@ group (FIG) of the Minnesota Center for Philosophy of Science, one March 19,
     numbers when you don't even know what finite is?
 \end{itemize}
 
-The point of this document is to explain how modern mathematics makes these
+The point of this document is to explain how contemporary mathematics
+makes these
 questions uninteresting.  They do not even arise.  Those brainwashed in
 logic and set theory cannot understand what this is about without learning
 newer ideas from abstract algebra, category theory, constructive analysis,
@@ -59,11 +65,12 @@ with special attention to these subjects.
 \subsection{Up to Isomorphism}
 
 Long ago in FIG we read \citet{mazur}, which explains that ``equal''
-in modern mathematics has been demoted from logical equality to ``isomorphic''
-or even to natural isomorphisms in the Yoneda lemma.
+in contemporary mathematics has been demoted from logical equality
+to ``isomorphic'' or even to natural isomorphisms in the Yoneda lemma.
 
-How many trivial groups are there?  The up-to-isomorphism view says just
-one.  If you insist that there are many, then all are isomorphic.
+How many trivial groups (having exactly one element) are there?
+The up-to-isomorphism view says just one.
+If you insist that there are many, then all are isomorphic.
 Modern mathematics says that arguing about whether the only element of a
 trivial group is ``really'' the empty set or a banana or Julius Caesar
 is just silly.
@@ -71,7 +78,7 @@ is just silly.
 And the same for everything else in mathematics, equality up to isomorphism
 is good enough.
 I know about Frege's Caesar problem.  But I don't care, and neither does
-any modern mathematician.
+any contemporary mathematician.
 Of course, even structuralist philosophers agree with this position, more
 or less (of course there are many different structuralist views).
 
@@ -142,7 +149,8 @@ has some sort of part-whole relationship to its codomain.
 \subsection{Abstract Algebra}
 
 The up-to-isomorphism view goes back to the rise of abstract algebra in
-the 1920's in the work of Noether and coworkers and in the textbooks of
+the 1920's in the work of Noether and coworkers
+\citep[Chapter~6]{kleiner} and in the textbooks of
 \citet{van-der-waerden} and \citet{birkhoff-maclane}.
 
 Consider abstract group theory, so the only sets of interest are groups
@@ -227,7 +235,10 @@ in ETCS) it has
 a non-logical constant symbol $\idfun_A$ for every object $A$,
 which are identity morphisms.
 
-Every morphism $f : A \to B$ goes from one object to another.
+Every morphism $f : A \to B$ goes from one object to another.\footnote{So
+if we are being very fussy, we can add to the formalism functions $\dom$
+and $\cod$ each taking morphisms to objects such that $f : A \to B$ means
+the same as $A = \dom(f)$ and $B = \cod(f)$.}
 Like for functions, we can call $A$ the domain and $B$ the codomain of $f$.
 But if we like to emphasize that morphisms are different from functions,
 we can call $A$ the source and $B$ the target.
@@ -239,7 +250,8 @@ The axioms for category theory are very sparse.  For a diagram
    A @>f>> B @>g>> C
 \end{CD}
 \end{equation}
-there is a morphism $h = g \circ f : A \to C$.  And for a diagram
+there is a morphism $h = g \circ f : A \to C$.\footnote{That is,
+$g \circ f$ exists if and only if $\dom(g) = \cod(f)$.}  And for a diagram
 $$
 \begin{CD}
    A @>f>> B @>g>> C @>h>> D
@@ -280,7 +292,9 @@ vector spaces & linear functions \\
 topological spaces & continuous functions \\
 metric spaces & uniformly continuous functions \\
 topological groups & continuous group homomorphisms \\
-topological vector spaces & continuous linear functions
+topological vector spaces & continuous linear functions \\
+measure spaces & measurable functions \\
+statistical models & functions measurable in $x$ and continuous in $\theta$
 \end{tabular}
 \end{center}
 \label{tab:categories}
@@ -366,7 +380,7 @@ There it is all groups and the morphisms are group homomorphisms.
 Here we seem to have lost the group homomorphisms, but we can get them
 back.  A \emph{functor} between categories is a function that maps
 objects to objects and morphisms to morphisms and respects the laws,
-that is if $F$ is the functor and we have diagram \eqref{diag:abc}
+that is, if $F$ is the functor and we have diagram \eqref{diag:abc}
 in the source category then we have the diagram
 $$
 \begin{CD}
@@ -502,7 +516,7 @@ For those brainwashed in logic and set theory, HoTT is really strange.
 It has no need for logic and set theory.  It eats them.  It has logic
 and set theory inside it.  They become parts of type theory.
 So type theory is not a theory in first-order logic or any other logic.
-Moreover types, the fundamental concept of type theory, are not defined
+Moreover, types, the fundamental concept of type theory, are not defined
 extensionally.
 Instead types are intensional.  Type theory, according to
 \citet{bauer}, is a theory of constructions.  Types are characterized by
@@ -512,7 +526,7 @@ of set, but is more general.
 In MLTT and HoTT the fundamental judgement is $a : A$
 read as $a$ is a term of type $A$.
 There are three different interpretations of $a : A$ used throughout HoTT
-in addition to the "neutral" one I just stated.
+in addition to the ``neutral'' one I just stated.
 We can say $a$ is an element of the set $A$, or we can say $a$ is a point
 in the space $A$ (which says the rules of $A$ give it additional structure
 over and above being a mere set),
@@ -540,7 +554,9 @@ It is only when we say that there can be different ways that elements
 of sets can be equal that this sounds bizarre to those brainwashed in
 logic and ZFC-like set theory.
 
-A type $A$ is a proposition \citep[Section~3.3]{hott-book} if it
+\subsubsection{Propositions and Sets}
+
+A type $A$ is a proposition \citepalias[Section~3.3]{hott-book} if it
 has at most one path component, that is,
 \begin{equation} \label{eq:proposition}
    \isProp(A) :\equiv \prod_{x, y : A} (x =_A y)
@@ -548,14 +564,14 @@ has at most one path component, that is,
 where $:\equiv$ indicates a definition and the $\Pi$-type can be read
 as either a Cartesian product or as logical for-all ($\forall$).
 Here it is best read as the latter.  A type $A$ is a proposition
-(the HoTT book, \citealp{hott-book}, often says \emph{mere} proposition
+(\citetalias{hott-book} often says \emph{mere} proposition
 to emphasize meaning this concept) if any two points are equal.
 So in a sense it has only one point, although the homotopical interpretation
 is only one path component (every two points are path connected).
 This makes mere propositions quite boring.  The only thing you can say
 about them is whether they are inhabited (true) or not (false).
 
-A type $A$ is a set \citep[Section~3.1]{hott-book} if every path component
+A type $A$ is a set \citepalias[Section~3.1]{hott-book} if every path component
 is contractible, that is,
 \begin{equation} \label{eq:set}
    \isSet(A) :\equiv \prod_{x, y : A} \prod_{p, q : (x =_A y)}
@@ -577,7 +593,7 @@ something), so the HoTT sets make a constructive set theory.
 An element of a set is, as we said above, just $a : A$, a term of a type.
 But a subset is weird.  It is weird, in one sense just like ZFC and in
 another sense wildly different.  It is a $\Sigma$-type
-\citep[Section~3.5]{hott-book}
+\citepalias[Section~3.5]{hott-book}
 \begin{equation} \label{eq:subset}
    \sum_{x : A} P(x)
 \end{equation}
@@ -588,7 +604,7 @@ anything ``more fundamental.''
 
 An element of the type \eqref{eq:subset} is a pair $(x, p)$
 where $x : A$ and $p : P(A)$.  Of course, where there is no proof (when
-$P(x)$ is empty, there is no pair ether.
+$P(x)$ is not inhabited, there is no pair ether.
 So \eqref{eq:subset} consists of pairs $(x, p)$ such that $x$ is a point
 of the subset and $p$ is a proof that this $x$ is in the subset.
 
@@ -596,9 +612,248 @@ You may think it inelegant that we are carrying the proofs along with
 the points.  But think again.  The alternative is to search all of mathematics
 for the proof when you need it to continue another proof.  By carrying it
 along the computer proof assistant does not have to search for $p$ when it
-is needed.
+is needed.  This is called \emph{proof-relevant} logic.
 
-\subsection{Homotopy Levels}
+\subsubsection{The Curry-Howard Correspondence}
+\label{sec:curry-howard}
+
+MLTT and HoTT can seem horribly baroque compared to ZFC-like set theories.
+So complicated!  They have lots of constructions and lots of rules
+governing their constructions.  ZFC just has one non-logical symbol for the
+membership relation and a few axioms.
+
+But ZFC needs first order logic, and MLTT and HoTT do not.  So that is not
+a fair comparison.  A good way to see that type theory is actually simpler
+than logic plus set theory is to see that it does not need anything
+not needed for them.  It just generalizes them.
+
+So we copy Table~1 from \citetalias{hott-book} adding a bit from
+Table~1.1 in \citet{rijke} to get our Table~\ref{tab:foo}
+(p.~\pageref{tab:foo}).
+\begin{table}
+\begin{center}
+\begin{tabular}{cllll}
+Symbol & Types & Logic & Sets & Homotopy \\
+\hline
+$A$ & type & proposition & set & space \\
+$a : A$ & term & proof & element & point \\
+$B(x)$ & dependent type & predicate & family of sets & fibration \\
+$b(x)$ & dependent term & conditional proof & family of elements & section \\
+$0$ & empty type & $\bot$ & $\varnothing$ & empty space \\
+$1$ & unit type & $\top$ & singleton set & one-point space \\
+$A + B$ & sum type & $A \vee B$ & disjoint union & coproduct space \\
+$A \times B$ & product type & $A \wedge B$ & set of pairs & product space \\
+$A \to B$ & function type & $A \implies B$ & set of functions & function space
+\\
+$\sum_{x : A} B(x)$ & dependent pair type & $\exists_{x : A} B(x)$ &
+    disjoint sum & total space \\
+$\prod_{x : A} B(x)$ & dependent function type & $\forall_{x : A} B(x)$ &
+    Cartesian product & space of sections \\
+$\text{id}_A$ or $=_A$ & identity type & equality (=) &
+    $\set{(x, x) : x \in A}$ & path space \\
+$A \to 0$ & & negation ($\neg A$) & &
+\end{tabular}
+\end{center}
+\caption{Type Theory, Logic, Set Theory, and Homotopy Theory}
+\label{tab:foo}
+\end{table}
+
+The last line of Table~\ref{tab:foo} does not really fit with the rest,
+but we need it to fill out the Curry-Howard correspondence (how logic fits
+into type theory).  If $A$ is a type, its negation
+is defined to be the type $A \to 0$.   This function space is inhabited
+if and only if $A$ is not inhabited.  In case $A \equiv 0$ the function
+$f : 0 \to 0$ is the empty function having a vacuous rule
+because we can evaluate $f(x)$ for all $x : 0$ but there are no such $x$,
+but there is such a function (all mathematicians agree).
+Conversely, in case $A$ is inhabited, there can be no function $A \to 0$
+because there is an $x : A$ but there is no point in the empty type for $f(x)$
+to be.
+
+Another thing we should perhaps clarify in the table is that in set theory
+$A \times B$ denotes the Cartesian product of $A$ and $B$, which is the
+set of (ordered) pairs
+$$
+   \set{ (x, y) : x \in A \wedge y \in B }
+$$
+and, still in set theory, if $\mathcal{A} = \set{ A_i : i \in I }$ an
+indexed family of sets then $\prod_{i \in I} \mathcal{A}$ is the set of
+functions $f : I \to \bigcup \mathcal{A}$
+satisfying $f(i) \in A_i$ for all $i$.  This is the general Cartesian
+product of any family of sets.  One statement of the axiom of choice is
+that if every element of $\mathcal{A}$ is nonempty, then $\prod \mathcal{A}$
+is nonempty.  This includes the case where $\mathcal{A}$ is the empty family,
+in which case the only inhabitant of $\prod \mathcal{A}$ is the identity
+function on the empty set.
+
+In HoTT ordered pair is a primitive concept.  We do not need an arbitrary
+and bizarre coding into set theory such as the Kuratowski definition
+$(a, b) = \{\{a\}, \{a, b\}\}$ where $\{a\}$ is the singleton set whose
+only element is $a$ and $\{a, b\}$ is the unordered pair whose existence
+is guaranteed by the pairing axiom of ZFC.  Then HoTT defines terms of
+type $A \times B$ to be ordered pairs $(a, b)$ with $a : A$ and $b : B$.
+This makes a non-dependent sum type $\sum_{a : A} B$ where $B$ does not
+depend on $A$, the same as the product type $A \times B$.  So there is
+some redundancy in the basic HoTT operations.
+For the dependent function type, $f$ is a term of type $\prod_{x : A} B(x)$
+if $f$ is a function such that $f(x) : B(x)$ for all $x : A$.  So here we
+are just again reading the $\Pi$-type as logical for-all.
+
+In HoTT \citepalias[Theorem~2.15.7]{hott-book} we do not need the axiom of
+choice in order for a dependent product type to be inhabited.  It is just true.
+However, this does not have the all of the logical consequences of the
+classical axiom of choice.  (More on this after some preliminaries.)
+
+If $A$ is a type, then there is another type $\lVert A \rVert$,
+called the \emph{propositional truncation} of $A$, defined
+as if $a : A$ then $a : \lVert A \rVert$ (the rules for producing terms
+of these types are the same) but if $a, b : \lVert A \rVert$, then $a = b$
+(so equality is redefined so that all terms of the latter are equal).
+This makes $\lVert A \rVert$ a mere proposition, regardless of what $A$ is.
+
+In Table~\ref{tab:foo} we were a bit cavalier about two of the lines.
+Various theorems in \citetalias{hott-book} prove that the operations take
+mere propositions to mere propositions except for the sum types, which don't.
+For example, $1$ is a mere proposition but $1 + 1$ has two elements that
+are not equal.  So it isn't.  So if we want to get what people usually
+think of as logic, we have to squash the sums.  Logical or becomes
+$\lVert A + B \rVert$ and the dependent sum type (logical exists) becomes
+$\left\lVert \sum_{x : A} B(x) \right\rVert$.
+This is Definition~3.7.1 {in} \citetalias{hott-book}.
+
+But \citetalias[Section~3.7]{hott-book}, also argues against the routine
+use of propositional truncation.  If $P$, $Q$, and $R$ are mere propositions
+and we want an implication $\lVert P + Q \rVert \to R$ it suffices to prove
+$P + Q \to R$ because the recursion principle for propositional truncation
+gives us the implication $\lVert P + Q \rVert \to R$.
+
+What is the difference?  To prove $\lVert P + Q \rVert$, we prove $P$ or prove
+$Q$ and forget which one.  To prove $P + Q$, we prove $P$ or prove
+$Q$ and remember which one.  Mathematically, there is no
+point to the forgetting.
+
+And similarly for the dependent sum type, which we read as logical exists.
+This is similar to the discussion of the subset relation in the preceding
+section.  A term of $\sum_{x : A} P(x)$ is an ordered pair $(x, p)$ where
+$x : A$ and $p$ is a proof of the proposition $P(x)$.  A term of its
+propositional truncation forgets both $x$ and $p$ (more precisely, it forgets
+that there are any differences between this $x$ and $p$ and any other
+$y : A$ and $q : P(y)$).
+Mathematically, there is no point to the forgetting (propositional truncation).
+
+So \citetalias{hott-book} never unnecessarily uses propositional truncation.
+This gives its logic a different feel from the logic taught in philosophy
+classes.
+
+Now we can also clarify the difference between the so-called HoTT axiom
+of choice mentioned above and the classical axiom of choice.  This is
+\citepalias[Lemma~3.8.2]{hott-book}, if $A$ is a set and $B(x)$ is a set
+for all $x : A$, then
+$$
+   \left( \prod_{x : A} \left\lVert B(x) \right\rVert \right) \to 
+   \left\lVert \prod_{x : A} B(x) \right\rVert
+$$
+And we read this just like the classical axiom of choice: if each $B(x)$
+is inhabited, then so is $\prod_{x : A} B(x)$.
+But we repeat that without the propositional truncation this is just true
+(indeed, here, trivially true).
+
+\subsubsection{Homotopy Equivalence}
+
+The point of this section is that in HoTT isomorphism is too strong a concept.
+Recall that the identity function $\idfun_A : A \to A$ maps $x \mapsto x$.
+For $f : A \to B$ define
+$$
+   \qinv(f) :\equiv \sum_{g : B \to A}
+   (f \circ g = \idfun_B) \times (g \circ f = \idfun_A)
+$$
+This looks like the HoTT analog of the regular definition of isomorphism
+(we have to remember that $=$ means $=_{(A \to A)}$ or $=_{(B \to B)}$
+as the case may be, a defined equivalence relation).
+
+The trouble is, that (surprisingly) this is not a mere proposition
+\citepalias[Theorem~4.1.3]{hott-book}.  So we could use propositional
+truncation.  But (again perhaps suprisingly) the HoTT book does not.
+Instead it defines three homotopically equivalent concepts, each of
+which characterizes homotopy equivalence.  The simplest (IMHO) is
+for $f : A \to B$
+$$
+   \binv(f) :\equiv \left( \sum_{g : B \to A} (f \circ g = \idfun_B)\right)
+   \times \left( \sum_{h : B \to A} (h \circ f = \idfun_A)\right)
+$$
+This says that $f$ has a left inverse $h$ and a right inverse $g$ that are
+not necessarily the same.
+We are used to inverses being unique.
+They are in category theory.\footnote{First we prove that identity functions
+are unique.  If $\idfun_A$ and $\idfun_A'$ are two identity functions $A \to A$
+then $\idfun_A = \idfun_A \idfun_A' = \idfun_A'$ by the identity laws.
+Then suppose $f$ has a left inverse $h$ and a right inverse $g$, as in
+the HoTT definition of $\binv(f)$.  Then
+$$
+   h = h \circ \idfun_B = h \circ (f \circ g)
+   = (h \circ f) \circ g = \idfun_A g = g
+$$
+Hence $h = g$.  Moreover, this implies that any two-sided inverses must
+be equal.}
+For any function $f$, $\binv(f)$ is a mere proposition
+\citepalias[4.3.2]{hott-book} and this is the definition that is the
+key to the whole theory.
+
+Now we define $\isEquiv(f)$ to be the same as $\binv(f)$.  And we
+write $A \simeq B$ when $f : A \to B$ and $\binv(f)$.
+
+\subsubsection{Universes and Univalence}
+
+In HoTT we allow types to have types.  This again raises the specter of
+Russell's paradox.  So we collect types into universe types.  Then we can
+consider a dependent type as a function $B : A \to \mathcal{U}$.
+To be careful we cannot have $\mathcal{U} : \mathcal{U}$ because that
+would allow Russell's paradox.  So we might have to have a sequence of
+ever larger universes.  But normally, we do not need to worry about that
+(and won't here).
+
+Then we can consider for $A, B : \mathcal{U}$ the equality
+type $(A =_\mathcal{U} B)$.  And it is provable in MLTT
+\citepalias[Lemma~2.10.1]{hott-book} for $A, B : \mathcal{U}$ there
+exists a function defined in the proof of the lemma
+$$
+   \text{idToEquiv} : (A =_\mathcal{U} B) \to (A \simeq B)
+$$
+Voevodsky proved that it is consistent to assume as an axiom that this
+function is an equivalence, that is,
+$$
+   (A =_\mathcal{U} B) \simeq (A \simeq B)
+$$
+So this is the high water mark of the HoTT view of equivalence.  It
+is sometimes misunderstood as saying that isomorphic types are equal,
+but it is not that isomorphism is being reduced to equality (some sort
+of skeletality condition) but rather than equality is being expanded to
+be equivalent to equivalence.
+
+We can now also clarify the status of the law of excluded middle (LEM) in
+HoTT.  The following statement
+$$
+   \prod_{A : \mathcal{U}} \bigl(A + (A \to 0)\bigr)
+$$
+is incompatible with the univalence axiom
+\citepalias[Theorem~3.2.2]{hott-book}.  So we cannot have that.
+
+But we can consistently assume \citepalias[Section~3.4]{hott-book}
+$$
+   \prod_{A : \mathcal{U}} \Bigl(\isProp(A) \to \bigl(A + (A \to 0)\bigr)
+   \Bigr)
+$$
+However, we do not routinely assume this (sometimes denoted $\text{LEM}_{-1}$)
+because it makes our theorems not applicable to large parts of contempory
+mathematics.
+
+As a simple example, notice that this document always says inhabited rather
+than nonempty (= not empty, so inhabited = not not empty, and the classical
+equivalence of these two concepts is literally double negation removal,
+which is equivalent to LEM).  Often, just changing the way you say things
+allows for constructive mathematics.
+
+\subsubsection{Homotopy Levels}
 
 This section is tricky and probably should be skipped at first reading.
 
@@ -606,7 +861,7 @@ Mathematicians see a pattern in the definitions of (mere) propositions
 and (mere) sets in HoTT.
 
 They start with contractibility.  A type $A$ is contractible
-\citep[Section~3.11]{hott-book}
+\citepalias[Section~3.11]{hott-book}
 if it has exactly one path component, that is,
 \begin{equation} \label{eq:contractible}
    \isContr(A) :\equiv \sum_{a : A} \prod_{b : A} (a =_A b)
@@ -625,18 +880,33 @@ so $f$ is a homotopy that maps the constant path (one endpoint is always $a$)
 to the identity path (the other endpoint ranges over $b : A$).
 And in algebraic topology this is a stronger property than path connectedness.
 
-Now for the pattern.  We generalize.  First we notice
-\begin{align*}
-   \isProp(A) & \equiv \prod_{x, y : A} \isContr(x =_A y)
+Now for the pattern.  We define homotopy-$n$-types
+\citepalias[Chapter~7]{hott-book}
+by
+\begin{align}
+   \text{is-$(- 2)$-type}(A) & :\equiv \isContr(A)
    \\
-   \isSet(A) & \equiv \prod_{x, y : A} \isProp(x =_A y)
-\end{align*}
+   \text{is-$(n + 1)$-type}(A)
+   & :\equiv
+   \prod_{x, y : A} \text{is-$n$-type}(x =_A y),
+   \qquad n \ge -2
+   \label{eq:type-recursion}
+\end{align}
+The bizarre idea to start counting at $- 2$ is to match up with how
+homotopy levels were defined in homotopy theory before HoTT was invented.
+
+It is then a theorem
+\citepalias[Lemma~???]{hott-book} that $\isProp(A)$ is equivalent (in a sense
+to be discussed in Section~\ref{sec:equivalence} below)
+to $\text{is-$(-1)$-type}(A)$.  Since both sides here are propositions,
+this merely means there is a function (read as logical implication) from
+each to the other.
+
+\REVISED
+
 so we generalize: we say that sets are homotopy zero types and
 \citep[Chapter~7]{hott-book}
-\begin{equation} \label{eq:type-recursion}
-   \text{is-$(n + 1)$-type}(A) :\equiv
-   \prod_{x, y : A} \text{is-$n$-type}(x =_A y)
-\end{equation}
+\MOVED[equation]
 so by induction we define $n$-types for all natural numbers $n$,
 except it is clear from the above that we can start lower.
 If we let $(-2)$-types be contractible types
@@ -670,76 +940,6 @@ as \eqref{eq:proposition-too} does.
 This is all very mysterious, so let us have some simplification.
 \Citet[Lemma~3.11.3(iii)]{hott-book} says $\isContr(A)$ implies $A \simeq 1$,
 where $\simeq$ is the symbol for homotopy equivalence.
-
-\subsection{The Curry-Howard Correspondence}
-
-MLTT and HoTT can seem horribly baroque compared to ZFC-like set theories.
-So complicated!  They have lots of constructions and lots of rules
-governing their constructions.  ZFC just has one non-logical symbol for the
-membership relation and a few axioms.
-
-But ZFC needs first order logic, and MLTT and HoTT do not.  So that is not
-a fair comparison.  A good way to see that type theory is actually simpler
-than logic plus set theory is to see that it does not need anything
-not needed for them.  It just generalizes them.
-
-So we copy Table~1 from \citet{hott-book} adding a bit from
-Table~1.1 in \citet{rijke} to get our Table~\ref{tab:foo}
-(p.~\pageref{tab:foo}).
-\begin{table}
-\begin{center}
-\begin{tabular}{cllll}
-Symbol & Types & Logic & Sets & Homotopy \\
-\hline
-$A$ & type & proposition & set & space \\
-$a : A$ & term & proof & element & point \\
-$B(x)$ & dependent type & predicate & family of sets & fibration \\
-$b(x)$ & dependent term & conditional proof & family of elements & section \\
-$0$ & empty type & $\bot$ & $\varnothing$ & empty space \\
-$1$ & unit type & $\top$ & singleton set & one-point space \\
-$A + B$ & sum type & $A \vee B$ & disjoint union & coproduct space \\
-$A \times B$ & product type & $A \wedge B$ & set of pairs & product space \\
-$A \to B$ & function type & $A \implies B$ & set of functions & function space
-\\
-$\sum_{x : A} B(x)$ & dependent pair type & $\exists_{x : A} B(x)$ &
-    disjoint sum & total space \\
-$\prod_{x : A} B(x)$ & dependent function type & $\forall_{x : A} B(x)$ &
-    Cartesian product & space of sections \\
-$\text{id}_A$ or $=_A$ & identity type & equality (=) &
-    $\set{(x, x) : x \in A}$ & path space \\
-$A \to 0$ & & negation & &
-\end{tabular}
-\end{center}
-\caption{Type Theory, Logic, Set Theory, and Homotopy Theory}
-\label{tab:foo}
-\end{table}
-
-The last line of Table~\ref{tab:foo} does not really fit with the rest,
-but we need it to fill out the Curry-Howard correspondence (how logic fits
-into type theory).  If $A$ is a type, its negation
-is defined to be the type $A \to 0$.   This function space is inhabited
-if and only if $A$ is not inhabited.  In case $A \equiv 0$ the function
-$f : 0 \to 0$ is the empty function having a vacuous rule
-because we can evaluate $f(x)$ for all $x : 0$ but there are no such $x$,
-but there is such a function (all mathematicians agree).
-Conversely, in case $A$ is inhabited, there can be no function $A \to 0$
-because there is an $x : A$ but there is no point in the empty type for $f(x)$
-to be.
-
-Another thing we should perhaps clarify in the table is that in set theory
-$A \times B$ denotes the Cartesian product of $A$ and $B$, which is the
-set of (ordered) pairs
-$$
-   \set{ (x, y) : x \in A \wedge y \in B }
-$$
-if $\mathcal{A} = \set{ A_i : i \in I }$ an indexed family of sets then
-$\prod \mathcal{A}$ is the set of functions $f : I \to \bigcup \mathcal{A}$
-satisfying $f(i) \in A_i$ for all $i$.  This is the general Cartesian
-product of any family of sets.  One statement of the axiom of choice is
-that if every element of $\mathcal{A}$ is nonempty, then $\prod \mathcal{A}$
-is nonempty.  This includes the case where $\mathcal{A}$ is the empty family,
-in which case the only inhabitant of $\prod \mathcal{A}$ is the identity
-function on the empty set.
 
 \section{The Natural Numbers and Finiteness}
 
@@ -779,6 +979,11 @@ Eilenberg, S., and Mac Lane, S. (1945).
 \newblock \emph{Transactions of the American Mathematical Society},
     \textbf{58}, 231--294.
 \newblock \doi{10.1090/S0002-9947-1945-0013131-6}.
+
+\bibitem[Kleiner(2007)]{kleiner}
+Kleiner, I. (2007).
+\newblock \emph{A History of Abstract Algebra}.
+\newblock Boston: Birkh\"{a}user.
 
 \bibitem[Lawvere(1963)]{lawvere-thesis}
 Lawvere, F. W. (1963).
