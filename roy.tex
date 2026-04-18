@@ -7,6 +7,7 @@
 \usepackage{amssymb}
 \usepackage{indentfirst}
 \usepackage{natbib}
+\usepackage{rotating}
 \usepackage[colorlinks=true,allcolors=blue]{hyperref}
 \usepackage{url}
 \usepackage{doi}
@@ -22,13 +23,29 @@
 \DeclareMathOperator{\binv}{biinv}
 \DeclareMathOperator{\isEquiv}{isEquiv}
 \DeclareMathOperator{\refl}{refl}
+\DeclareMathOperator{\inl}{inl}
+\DeclareMathOperator{\inr}{inr}
+\DeclareMathOperator{\successor}{succ}
+\DeclareMathOperator{\inductor}{ind}
+\DeclareMathOperator{\recursor}{rec}
+
+\newcommand{\sloop}{\text{loop}}
+\newcommand{\sbase}{\text{base}}
+\newcommand{\ssurf}{\text{surf}}
 
 \newcommand{\set}[1]{\{\,#1\,\}}
+\newcommand{\proptrunc}[1]{\lVert #1 \rVert}
+\newcommand{\termtrunc}[1]{\lvert #1 \rvert}
+\newcommand{\bigproptrunc}[1]{\left\lVert #1 \right\rVert}
 
+\newcommand{\ints}{\mathbb{Z}}
 \newcommand{\nats}{\mathbb{N}}
 \newcommand{\real}{\mathbb{R}}
+\newcommand{\universe}{\mathcal{U}}
 
 \newcommand{\fatdot}{\,\cdot\,}
+
+\let\emptyset=\varnothing
 
 \newcommand{\REVISED}{\begin{center} \LARGE REVISED DOWN TO HERE \end{center}}
 \newcommand{\MOVED}[1][equation]{\begin{center} [#1 moved] \end{center}}
@@ -60,16 +77,17 @@ set theory cannot understand what this is about without learning
 newer ideas from abstract algebra, category theory, constructive analysis,
 and type theory, especially homotopy type theory.
 
-So this document has evolved into a history of mathematics since 1900
+So this document evolved into a history of mathematics since 1900
 with special attention to these subjects.
 
-\section{Substructure}
-
-\subsection{Up to Isomorphism}
+\section{Up to Isomorphism}
+\label{sec:up-to-isomorphism}
 
 Long ago in FIG we read \citet{mazur}, which explains that ``equal''
 in contemporary mathematics has been demoted from logical equality
-to ``isomorphic.''
+to ``isomorphic''.\footnote{\citeauthor{mazur} also presents an extreme
+structuralist view that the Yoneda lemma of category theory means that
+isomorphism is determined by the morphisms of objects to other objects.}
 
 How many trivial groups (having exactly one element) are there?
 The up-to-isomorphism view says just one.
@@ -85,12 +103,16 @@ any contemporary mathematician.
 Of course, even structuralist philosophers agree with this position, more
 or less (of course there are many different structuralist views).
 
-\subsection{The Elementary Theory of the Category of Sets}
+As we shall see (Section~\ref{sec:homotopy-equivalence} below),
+homotopy type theory says that even isomorphism is too strong and
+needs to be replaced with a weaker concept: homotopy equivalence.
+
+\section{The Elementary Theory of the Category of Sets}
 
 Set theory was reconceptualized in the 1960's by
 Lawvere.  His elementary theory of the category of sets (ETCS)
 \citep{lawvere-etcs}
-has a different way of making the issue of substructure disappear.
+has a way of making the issue of substructure disappear.
 
 Long ago in FIG we read \citet{leinster}, which is an elementary
 explication of ETCS.  ETCS is motivated by category theory and topos theory,
@@ -105,7 +127,18 @@ symbol $\circ$ read as composition of functions.
 We can (this is a matter of taste) also include non-logical constants
 $\idfun_A$ for every set $A$, which are identity functions.
 If we do not include these constants,
-instead we include axioms that say identity functions exist and are unique.
+instead we include axioms that say identity functions exist and
+are unique.\footnote{It is also possible to state ETCS as a one-sorted
+theory with variables ranging over functions and one ternary relation
+which holds for functions $f$, $g$, and $h$ if and only if $h = g \circ f$.
+Then there are some axioms that
+say that some functions behave like identity functions (they obey the identity
+laws of a category, equations \eqref{eq:identity} and \eqref{eq:identity-too}
+below) and then, of course, each identity function can be associated with
+a set (object).  But in this functions-only view, there are no sets.  The
+only role of sets in ETCS or objects in categories (Section~\ref{sec:category}
+below) is to indicate which functions in ETCS or morphisms in categories
+are composable.\label{foot:arrows-only}}
 
 In short, in ZFC sets and set membership are the primary concepts,
 whereas in ETCS sets and
@@ -139,11 +172,8 @@ $$
    1 @>x>> A @>f>> B
 \end{CD}
 $$
-
-This all makes sense because the set $1$ has exactly one element
-$* : 1 \to 1$ (unique because 1 is terminal).  So for any $x$ as above,
-$f(x)$ means the same as $f(x(*))$.  And this is an element of the codomain
-of $f$.
+This all makes sense because by definition the composite arrow $f \circ x$
+maps $1 \to B$ hence is an element of $B$.
 
 To define the subset relation \citep[Discussion of Axiom~8]{leinster}
 we first define \emph{injective} functions.
@@ -152,23 +182,39 @@ it has the left cancellation property: if $x$ and $y$ are elements of
 the domain of $f$, then $f \circ x = f \circ y$ implies $x = y$.
 Of course, this is just the usual definition in different notation.
 
-In ETCS a \emph{subset} is just an injective function into a set.
+In ETCS a \emph{subset} is just an injective function into a set.\footnote{
+Of course, an element is also an injective function, trivially so, because
+$1$ has only one point (proof: there is one function $1 \to 1$ because $1$
+is terminal).  Thus ETCS does not distinguish between an element $x$ and
+the singleton set $\{x\}$ which is a subset.}
 Hence it makes no philosophical sense to ask in what way this function
 has some sort of part-whole relationship to its codomain.
 
-\subsection{Abstract Algebra}
+\citet{leinster} following \citet{lawvere-etcs} argues that mathematicians
+outside of pure set theory \citep[the subject of][]{jech} only use ETCS,
+which is a weaker theory than ZCF
+\citep[Section~``How strong are the axioms?'']{leinster}, lacking any analogue
+of the ZFC axiom schema of replacement.
+It can even be argued that mathematicians outside of pure set theory mostly
+use even less, only naive set theory \citep{halmos}.
+
+\section{Abstract Algebra}
+\label{sec:abstract-algebra}
 
 The up-to-isomorphism view goes back to the rise of abstract algebra in
 the 1920's in the work of Noether and coworkers
 \citep[Chapter~6]{kleiner} and in the textbooks of
 \citet{van-der-waerden} and \citet{birkhoff-maclane}.
 
-Consider abstract group theory, so the only sets of interest are groups
+Consider abstract group theory, where the only sets of interest are groups
 and the only functions of interest are group homomorphisms.
 The first isomorphism theorem (of group theory,
-\citealp[Theorem~8.1]{aluffi}, almost every algebraic theory
-has a similar theorem) says, if $f : G \to H$ is a group homomorphism,
+\citealp[Theorem~II.8.1]{aluffi};
+almost every algebraic theory has a similar theorem, even set theory,
+\citealp[Theorem~I.2.7]{aluffi})
+says, if $f : G \to H$ is a group homomorphism,
 then it may be decomposed as in the following commutative diagram
+(more on commutative diagrams in Section~\ref{sec:diagram} below)
 \begin{equation} \label{diag:isomorphism}
 \begin{CD}
    G @>f>> H \\
@@ -177,14 +223,19 @@ then it may be decomposed as in the following commutative diagram
 \end{CD}
 \end{equation}
 where $G / \ker(f)$ is the group $G$ with equality redefined to mean
-$x =_{G / \ker(f)} y$ if and only if $f(x) =_H f(y)$,
-where the downward arrow denotes the quotient map,
-the lower horizontal arrow denotes the canonical group isomorphism,
-and the upward arrow denotes the canonical injection.
-All three of these maps are just $x \mapsto x$.
-The quotient map and the canonical group isomorphism have equality defined
-differently on their domain and codomain, whereas the canonical injection
-has equality defined the same on both.
+$x =_{G / \ker(f)} y$ if and only if $f(x) =_H f(y)$,\footnote{The
+notation $=_A$ means equality as defined for the object $A$, much
+more on this in what follows, Sections~\ref{sec:constructive}
+and~\ref{sec:identity} below.}
+where the downward arrow denotes the quotient map,\footnote{The
+quotient map can be considered the map $x \mapsto x$ with equality
+defined differently of the domain and codomain (as explained in the text).}
+the lower horizontal arrow denotes the canonical group
+isomorphism,\footnote{The isomorphism can be though of as just $f$,
+except with equality defined differently on its domain
+(as explained in the text).}
+and the upward arrow denotes the canonical injection.\footnote{The
+canonical injection is just $x \mapsto x$.}
 
 The theorem has zero interest in whether $f(G)$ and $H$ have some
 sort of part-whole relationship (or exactly what kind if so).  We do have
@@ -194,12 +245,30 @@ indicates a group homomorphism says that $f(G)$ is a subgroup of $H$
 rather than a mere subset.
 Similarly $G / \ker(f)$ and $f(G)$ are isomorphic, hence
 each is a subset of the other in the sense of ETCS.  And that is all group
-theorists really need (or should want).
+theorists really need (or should want).\footnote{
+The notation $\ker(f)$ denotes a subgroup of $G$ and
+the notation $f(G)$ a subgroup of $H$ \citep[Section~II.6]{aluffi},
+but the notation $G / \ker(f)$ does
+not denote a subgroup of anything in diagram~\ref{diag:isomorphism}.
+Rather, $G / \ker(f)$ is a factor group of $G$, that is,
+$\ker(f) \times (G / \ker(f))$ is isomorphic to $G$
+\citep[Section~II.3.4]{aluffi}.}
 
-In diagram \eqref{diag:isomorphism} $\ker(f)$ is a subgroup of $G$ and
-$f(G)$ is a subgroup of $H$, but $G / \ker(f)$ is not a subgroup of anything
-in the diagram.  Rather, $G / \ker(f)$ is a factor group of $G$, that is,
-$\ker(f) \times (G / \ker(f)) = G$.
+A group $G$ is \emph{simple} if for any homorphism $f : G \to H$
+the group $G / \ker(f)$ as described by the first isomorphism theorem
+is isomorphic to either $G$ itself or the trivial group.
+Simple groups are like prime factors of groups
+(the Jordan-H\"{o}lder theorem, \citealp[Theorem~IV.3.1]{aluffi}).
+A great accomplishment of twentieth century mathematics was the
+classification of the finite simple groups, finished in 1980 or perhaps 2004
+\citep{aschbacher}.
+It is perhaps the most amazing example of mathematics delivering amazing
+complexity that was not built in at the start.
+To even describe the classification (all of the finite simple groups)
+takes a large book
+\citep[more than 300 pages if frontmatter is included]{wilson}.
+The whole proof to this day (as far as I can see) has not been digested
+and written up in a straightforward way, although work on this is ongoing.
 
 So the notion of structure-preserving function (called homomorphism in group
 theory) subsumes and generalizes the notion of subset or even
@@ -207,7 +276,17 @@ structure-preserving subset (here subgroup).
 And this way of thinking is 100 years old and has gotten stronger and stronger
 over the years.
 
-\subsection{Constructive Analysis}
+Another moral of the story is that isomorphism is not particularly interesting.
+If $f$ in the first isomorphism theorem is itself an isomorphism, then all
+four groups in diagram~\ref{diag:isomorphism} are isomorphic, and we haven't
+learned anything.  It is only when $f$ is a homomorphism that is not an
+isomorphism that we learn something (get a non-trivial factorization).
+Then $\ker(f)$ and $G / \ker(f)$ are not isomorphic to $G$, and we have
+factored $G$.
+So we are interested in all the homomorphisms, not just the isomorphisms.
+
+\section{Constructive Analysis}
+\label{sec:constructive}
 
 It may seem strange that we defined a quotient group in the preceding section
 by redefining equality (rather than using equivalence classes), but this
@@ -229,7 +308,35 @@ we write $=_A$ rather than just $=$ to mean equality for the type $A$.
 So we did not need to think of equivalence classes at all (much less to
 think of them as sets) to define a quotient group.
 
-\subsection{Category Theory}
+In constructive mathematics, which is mathematics that does
+not use the law of excluded middle (LEM) anywhere, putting equality
+in the logic no longer works well.  LEM says that for any proposition $P$,
+either $P$ or not $P$, that is, $\forall P, P \vee \neg P$.
+A constructively provable equivalent to LEM is double negation
+removal $\forall P, \neg \neg P \to P$.
+When applied to negated propositions, LEM and double negation removal
+are constructively valid (provable without LEM), that is,
+\begin{align*}
+   & \forall P, (\neg P) \vee (\neg \neg P)
+   \\
+   & \forall P, (\neg \neg \neg P) \to (\neg P)
+\end{align*}
+are both rules of constructive mathematics.  Thus if we want to talk about
+$x$ and $y$, the propositions
+\begin{align*}
+   & x = y
+   \\
+   & \neg (x = y)
+   \\
+   & \neg \neg (x = y)
+\end{align*}
+are all different.
+The result of this mess is that to get real math done, you had better
+make sure equals means exactly what you want it to mean and ignore the
+mess.  And this is what Bishop did.  (Much more on this theme in all
+that follows.)
+
+\section{Category Theory}
 \label{sec:category}
 
 We have already seen how in ETCS the set membership and subset relations are
@@ -237,10 +344,12 @@ defined in terms of functions.  In category theory, functions are generalized
 to morphisms, which are like any abstraction: morphisms have some properties of
 functions but not all properties.
 
-\subsubsection{Definition and Axioms}
+\subsection{Definition and Axioms}
 
-A category (like ETCS) has two sorts of variables, those ranging over
-\emph{objects} and those ranging over \emph{morphisms}.
+A category (like ETCS) has two sorts of variables,
+\emph{objects} and those ranging over \emph{morphisms}.\footnote{One can also
+make category theory a one-sorted theory with variables ranging over morphisms,
+as discussed in footnote~\ref{foot:arrows-only} above.}
 And it has a non-logical binary function
 symbol $\circ$ for composition of morphisms.  And (according to taste, like
 in ETCS) it has
@@ -284,7 +393,8 @@ Identities are unique.\footnote{If $\idfun_A$ and $\idfun_A'$ were
 both identites for object $A$, then the identity laws imply
 $\idfun_A = \idfun_A \circ \idfun_A' = \idfun_A'$.\label{foot:identity}}
 
-\subsubsection{Diagram Chasing}
+\subsection{Diagram Chasing}
+\label{sec:diagram}
 
 Category theory makes much use of \emph{commutative diagrams}.
 These are diagrams of directed graphs in which the nodes of the graph
@@ -307,7 +417,7 @@ $h \circ (g \circ f) = h \circ g \circ f = (h \circ g) \circ f$.
 
 For another example, to say that the following diagram is commutative
 \begin{equation}
-\label{diag:associative}
+\label{diag:identity}
 \begin{tikzcd}
     A \arrow{r}{f} \arrow{d}[swap]{\idfun_A} \arrow{dr}{f} &
     B \arrow{d}{\idfun_B} \\
@@ -322,7 +432,7 @@ Commutative diagrams, like \eqref{diag:isomorphism} above,
 organize whole proofs.  The diagram itself is (almost) the proof.
 You just have to check that all the details it asserts are correct.
 
-\subsubsection{Categories in Which Morphisms are Functions}
+\subsection{Categories in Which Morphisms are Functions}
 
 The axioms of ETCS say that ETCS is a category with sets as the objects
 and functions as the morphisms.  But ETCS needs more axioms than just
@@ -332,11 +442,16 @@ objects and morphisms act like sets and functions.
 We note, if it isn't already obvious, that the objects of a category need
 not be sets and do not have to have elements and that the morphisms of a
 category need not be functions, and there need be no sense in which they
-can be evaluated.  Examples below.
+can be evaluated (examples below).
 
 But for many categories, the objects are sets with extra structure and the
-morphisms are structure-preserving functions.  Some of these are shown
-in Table~\ref{tab:categories}.
+morphisms are structure-preserving functions.\footnote{To say that morphisms
+are actually functions means that composition of morphisms is actually
+composition of functions, that is, $h = g \circ f$ means $h(x) = g(f(x))$
+for all $x$ in the domain of $f$, which is also the domain of $h$.
+But, in general, composition of morphisms only has to satisfy
+the laws; it does not need to be defined in terms of something else.}
+Some of these are shown in Table~\ref{tab:categories}.
 \begin{table}
 \caption{Categories of Structured Sets and Structure-Preserving Functions}
 \begin{center}
@@ -362,7 +477,7 @@ statistical models & functions measurable in the random variable
 \label{tab:categories}
 \end{table}
 
-\subsubsection{Isomorphisms}
+\subsection{Isomorphisms}
 \label{sec:iso}
 
 In category theory, a morphism $f : A \to B$ is \emph{iso},
@@ -376,7 +491,7 @@ that is, $f$ is an \emph{isomorphism}, if there exists $g : B \to A$ such that
    \label{eq:isodef-b}
 \end{align}
 \end{subequations}
-In all of the categories in Table~\ref{tab:categories} this category theory
+In all of the categories in Table~\ref{tab:categories} this category theoretic
 notion of isomorphism coincides with the pre-existing notion of isomorphism
 that existed before category theory was invented.
 
@@ -389,7 +504,23 @@ Then $g = g \circ \idfun_B = g \circ (f \circ g') = (g \circ f) \circ g'
 = \idfun_A \circ g' = g'$.
 \label{foot:inverse}}
 
-\subsubsection{Preorders}
+Isomorphism answers an important philosophical question.  What is a
+topological property?  Or a group theoretic property?  Or a
+whatever-area-of-mathematics-we-are-discussing property?
+The answer is a property that does not distinguish between isomorphic
+objects of the category of those objects and their morphisms.
+Admittedly this is rather tautological.  If you are interested in a property
+that distinguishes isomorphic topological spaces, then you are not doing
+topology but rather some other area of mathematics.
+This explains the up-to-isomorphism view (Sections~\ref{sec:up-to-isomorphism}
+and~\ref{sec:abstract-algebra} above and this section).
+
+Interestingly, this does not work for ZFC-like set theory.
+Sets are isomorphic if they have the same cardinality,
+but set theory is interested in lots of properties that distinguish
+sets of the same cardinality.
+
+\subsection{Preorders}
 \label{sec:preorder}
 
 A \emph{preorder} is a category in which for any two objects $A$ and $B$
@@ -397,7 +528,8 @@ there is at most one morphism $A \to B$.  Since there is one arrow $A \to A$,
 the identity morphism, this is the only arrow $A \to A$.
 Composition of morphisms says if there are arrows $A \to B \to C$, then there
 is exactly one arrow $A \to C$.  Since the only issue is whether there is
-an arrow between two objects, this looks like a relation (a binary predicate).
+an arrow between any two objects,
+this looks like a relation (a binary predicate).
 And the identity and composition laws say this is a reflexive and transitive
 relation.  Such a relation is called a \emph{preorder}.
 So to make this look more like conventional
@@ -420,7 +552,7 @@ The moral of the story is that morphisms in a category do not have to
 be anything like functions, and categories do not have to be anything
 like those in Table~\ref{tab:categories}
 
-\subsubsection{Groupoids}
+\subsection{Groupoids}
 \label{sec:groupoid}
 
 A \emph{groupoid} is a category in which every morphism is iso.
@@ -437,11 +569,11 @@ Moreover, every morphism has an inverse by the assumption that all
 morphisms are iso.
 
 A group is thus a category in which the objects are uninteresting;
-the arrows are everything.  But the arrows are nothing like functions.
+the arrows are everything.  But the arrows need be nothing like functions.
 This view of groups may seem strange, but was actually well known in
 group theory before category theory was invented.
 A \emph{permutation group} is exactly this construction when the object
-is a finite set and the morphisms are the isomorphisms (invertible functions
+is a finite set and the morphisms are all iso (invertible functions
 from this finite set to itself).
 An \emph{automorphism group} is exactly this construction when the object
 is any mathematical object whatsoever and the morphisms are isomorphisms
@@ -455,11 +587,11 @@ There it is all groups and the morphisms are group homomorphisms.
 Here we seem to have lost the group homomorphisms, but we can get them
 back (next section).
 
-\subsubsection{Functors}
+\subsection{Functors}
 
 A \emph{functor} between categories is a function that maps
 objects to objects and morphisms to morphisms and respects the laws,
-that is, if $F : \mathcal{C} \to \mathcal{D}$ is the functor
+that is, if $F : \mathcal{C} \to \mathcal{D}$ is a functor
 and we have diagram \eqref{diag:abc}
 in the source category $\mathcal{C}$ then we have the diagram
 \begin{equation}
@@ -468,10 +600,30 @@ in the source category $\mathcal{C}$ then we have the diagram
    F(A) @>{F(f)}>> F(B) @>{F(g)}>> F(C)
 \end{CD}
 \end{equation}
-in the target category $\mathcal{D}$,
-and the functor also maps identities to identities
+in the target category $\mathcal{D}$. That is,
+$$
+   F(g \circ f) = F(g) \circ F(f)
+$$
+Then we can prove the functor also maps
+identities to identities\footnote{In \eqref{diag:functor} replacing
+one or the other of the functions by an identity function gives
+for $f : A \to B$ in the source category
+$F(f) \circ F(\idfun_A) = F(f)$ and
+$F(\idfun_B) \circ F(f) = F(f)$.  This proves $F(\idfun_A)$ is an
+identity morphism for object $F(A)$ and similarly with $A$ replaced by $B$.
+This uses uniqueness of identities
+(footnote~\ref{foot:identity}).\label{foot:functor-identity}}
 $$
    F(\idfun_A) = \idfun_{F(A)}
+$$
+and inverses (when they exist) to inverses\footnote{In
+diagram~\eqref{diag:functor} suppose $f$ and $g$ are inverse functions.
+then $A = C$ and $F(A) = F(C)$ so $F(f)$ and $F(g)$ are also inverse functions
+(because the composite arrow is an identity).
+This uses uniqueness of inverses
+(footnote~\ref{foot:inverse}).\label{foot:functor-inverse}}
+$$
+   F(f^{-1}) = F(f)^{-1}
 $$
 
 A functor between categories that are groups
@@ -480,22 +632,10 @@ is a group homomorphism in the sense of group theory.\footnote{Before
 category theory, a group homomorphism was defined to be
 a function $f : G \to H$ between groups that respected the group
 multiplication $f(x y) = f(x) f(y)$ (if we denote the group operation by
-multiplication).  But that is just what \eqref{diag:functor} says.
-Then we have to prove that a group homomorphism respects identities.
-Applying \eqref{diag:abc} with one or the other function being the
-identity gives $\idfun_{\textstyle *} \circ f = f$
-and $f \circ \idfun_{\textstyle *} = f$.  Applying \eqref{diag:functor} to
-these gives $F(f) = F(f) \circ F(\idfun_{\textstyle *})$
-and $F(f) = F(\idfun_{\textstyle *}) \circ F(f)$.  And this says
-$F(\idfun_{\textstyle *})$ is an identity function.  Then uniqueness
-of identities (Footnote~\ref{foot:identity}) finishes the proof.
-
-We can also show that group homomorphisms preserve identities in the same
-way.  Applying the functor laws to $f^{-1} \circ f = \idfun_A$
-and $f \circ f^{-1} = \idfun_B$ gives
-$F(f^{-1}) \circ F(f) = \idfun_{F(A)}$
-and $F(f) \circ F(f^{-1}) = \idfun_{F(B)}$.  And this shows $F(f)$ is
-an isomorphism.}
+juxtaposition).  But that is just what \eqref{diag:functor} says.
+Then we have to prove that a group homomorphism respects identities
+and inverses, but that comes from the functor definition
+(footnotes~\ref{foot:functor-identity} and~\ref{foot:functor-inverse}).}
 
 A functor between categories that are preorders (in the sense of
 Section~\ref{sec:preorder} is a monotone function in the sense of the
@@ -503,7 +643,7 @@ theory of orders and preorders.\footnote{This is obvious.
 Diagram \eqref{diag:functor}, translated into the symbology that replaces
 $\to$ with $\le$ says $x \le y$ implies $f(x) \le f(y)$.}
 
-\subsubsection{Homotopy}
+\subsection{Homotopy}
 \label{sec:homotopy}
 
 Category theory was created \citep{eilenberg-maclane}
@@ -513,7 +653,8 @@ What are they?
 Algebraic topology is the study of topology using algebraic methods,
 mostly using groups associated with topological spaces.
 A homotopy is a continuous deformation of a continuous function.
-Originally a homotopy $X \to Y$ was defined to be a (jointly) continuous
+Originally, a homotopy between functions $X \to Y$ was defined to be
+a (jointly) continuous
 function $I \times X \to Y$ where $I$ denotes the unit interval
 $\set{x \in \real : 0 \le x \le 1}$.
 Here $I \times X$ denotes the product topological space, which has the product
@@ -542,6 +683,9 @@ $f : A \to B$ is iso if there is a morphism $g : B \to A$ such that
 homotopic to, that is, $g \circ f$ is homotopy equivalent to the identity
 function on $A$ and $f \circ g$ is homotopy equivalent to the identity
 function on $B$.
+
+When objects of this category (topological spaces) are isomorphic,
+we say they are \emph{homotopy equivalent}.
 
 One moral of the story is here is another category in which the morphisms
 are not functions.
@@ -576,7 +720,7 @@ mathematical difficulty.  Duality often does not help.
 But a weaker concept perhaps can.
 
 But this document is not about algebraic topology, so we leave the subject
-here.
+here.  (It will come back in Section~\ref{sec:higher-induction} below.)
 
 We do want to say something else about homotopy.
 Since homotopies are continuous functions, we can make homotopies
@@ -586,7 +730,7 @@ jointly continuous functions $I \times I \times I \times X \to Y$.
 And so on and on with arbitrarily many ``homotopies of.''
 %%%%%%%%%% NEED FORWARD REFERENCE %%%%%%%%%%
 
-\subsubsection{Category Theory as a Foundation of Mathematics}
+\subsection{Category Theory as a Foundation of Mathematics}
 
 \citet{lawvere-thesis,lawvere-cat-of-cat}
 also proposed category theory as a foundation of mathematics.
@@ -595,7 +739,7 @@ in which the objects are categories and the morphisms are functors.
 
 Of course, if the category of all categories had itself as one of the objects
 we could reproduce Russell's paradox.
-So like in NBG (von Neumann-Bernays-G\"{o}del) set theory, we do not allow
+So like in NBG (von Neumann--Bernays--G\"{o}del) set theory, we do not allow
 that.  We say that the objects of the category of all categories are
 \emph{small categories} and that does not include the category of all
 categories (which thus is analogous to the universe of NBG set theory,
@@ -607,7 +751,8 @@ and functions or ETCS sets and functions or HoTT sets and functions
 \citepalias[Chapter~10]{hott-book} is a matter of taste.
 But it also contains the rest of mathematics.
 
-\subsubsection{Categorical Logic}
+\subsection{Categorical Logic}
+\label{sec:categorical-logic}
 
 I preface this section with an admission that I am incompetent to write
 on the subject, having never used it.  So I should not have the temerity
@@ -627,24 +772,105 @@ the category of topological spaces and continuous functions, one discovers
 topological groups.  If one looks in the category of smooth manifolds
 and differentiable functions, one discovers Lie groups.
 
-\subsection{Homotopy Type Theory}
+The next part of the story is that logical theories themselves also
+become categories.  The objects are well-formed formulas and the morphisms
+are logical implications.\footnote{This is where I am making a mistake.
+We define objects (formulas) to be equal if they are the same except for
+variable renaming.}  Thus logical theories are categories that are preorders
+in the sense of Section~\ref{sec:preorder} above.\footnote{But they have
+more properties than being merely preorders.}
+Actually, this was already required for functorial semantics to make sense:
+a functor goes from one category, here a logical theory, to another,
+here a logical model.
 
-For those brainwashed in logic and set theory, HoTT is really strange.
+\subsection{Applied Category Theory}
+
+It can be argued that category theory has more applications in the rest
+of mathematics than set theory.  No doubt set theory, at least naive
+set theory \citep{halmos}, is fundamental to several areas of
+mathematics,\footnote{
+In point set topology, the fundamental object is a topological space, which
+consists of a set $X$ and a family $\mathcal{O}$ of subsets of $X$,
+which is called a \emph{topology} and whose elements
+are called the \emph{open sets}, satisfying some axioms: the whole space
+and the empty set are open sets, and arbitrary unions and finite intersections
+of open sets are open.  Similarly, probability theory a fundamental object
+is a measurable space, which
+consists of a set $X$ and a family $\mathcal{A}$ of subsets of $X$,
+which is called a \emph{sigma-algebra} and whose elements
+are called the \emph{measurable sets}, satisfying Kolmogorov's axioms,
+and then a \emph{probability measure} is a function $\mathcal{A} \to \real$
+satisfying another of Kolmogorov's axioms.}
+although some of these areas can be replaced by more category-theoretic
+approaches \citep{johnstone}.
+By the 1950's set theory had percolated down to middle-school mathematics,
+where it was called ``new math.''
+
+In the second half of the twentieth century, category theory percolated
+through advanced mathematics, at least what may be called ``naive category
+theory'' by analogy with ``naive set theory'' even though there is no book
+with the former title.  As examples we can cite \citet{aluffi} which is
+full of category theory, commutative diagrams, and diagram-chasing proofs.
+And one might reply, sure, but that's algebra, what category theory was
+designed for.  But look at \citet{lang} and \citet{beattie-butzmann}, which
+do real and functional analysis, which you might think should be all
+for every $\varepsilon > 0$ there is a $\delta > 0$ such that $\ldots,$
+but which has some of that but also a lot of algebra so these books are
+also full of commutative diagrams and diagram-chasing proofs.
+Moreover, they are full of definitions and concepts that are categorically
+inspired.  \citet[Preface]{beattie-butzmann} even explain that much of the
+research literature they are digesting uses deep results from category theory
+which they have left out of the book so as not to bother their audience.
+
+But category theory can also be used to redo logic
+(Section~\ref{sec:categorical-logic} above)
+and computer programming.  One can think of a pure functional programming
+language (such as Haskell or OCaml or the languages written to implement
+proof assistants, such as ML, Rocq, and Agda) as a computer language having
+only one feature: functions.  All you can do is define functions and apply
+them.  These functions are the morphisms of the category, and composition
+is following one with another, which is the same as plugging in the results
+of one into the other (as its argument).  So category theory influences the
+design of these computer languages.\footnote{It is a joke but also a
+technically correct mathematical statement that a \emph{monad}
+on a category is a monoid object in the monoidal category of endofunctors.
+A joke because it mystifys more than explains.  But monads are a big deal
+in functional programming.}
+
+As far as I know category theory has only filtered down to advanced
+undergraduate mathematics (courses mostly for math majors).  It is not
+clear to me that the K-12 education establishment even wants to repeat
+the new math debacle with category theory.
+
+\section{Homotopy Type Theory}
+
+For those brainwashed in logic and ZFC-like set theory, HoTT is really strange.
 It has no need for logic and set theory.  It eats them.  It has logic
 and set theory inside it.  They become parts of type theory.
 So type theory is not a theory in first-order logic or any other logic.
 
-\subsubsection{Types}
+Also MLTT has no axioms (formulas in some logic asserted to be true).
+Instead it is formulated as rules for constructing types.
+HoTT does have one axiom: it adds to MLTT the univalence axiom
+(Section~\ref{sec:univalence} below).
+
+\subsection{Types}
 
 Types, the fundamental concept of type theory, are not defined
 extensionally.
 Instead types are intensional.  Type theory, according to
-\citet{bauer}, is a theory of constructions.  Types are characterized by
-rules for producing terms of the type.  This sounds like Bishop's definition
-of set, but is more general.
+\citet[near the beginning of the first lecture]{bauer-hott},
+is a theory of constructions.  Types are characterized by
+rules for producing terms of the type.\footnote{This is like Gentzen's
+natural deduction, just a lot of rules.  The rules for type theory
+are also often presented like in natural deduction: a horizontal line
+with premises above and the conclusion the rule provides below,
+as in Appendix~A of \citetalias{hott-book} and throughout \citet{rijke}.}
+This sounds like Bishop's definition of set, but is more general.
 
 In MLTT and HoTT the fundamental judgment is $a : A$
-read as $a$ is a term of type $A$.
+read as $a$ is a term of type $A$.\footnote{\citet{ladyman-presnell} say
+it is more philosophically correct to say ``token'' rather than ``term'' here.}
 There are three different interpretations of $a : A$ used throughout HoTT
 in addition to the ``neutral'' one just stated.
 We can say $a$ is an element of the set $A$, or we can say $a$ is a point
@@ -652,9 +878,9 @@ in the space $A$ (which says the rules of $A$ give it additional structure
 over and above being a mere set),
 or we can say $A$ is a proposition (interpreted
 as true if it is inhabited and false otherwise) and $a$ is a proof of $A$.
-
+ 
 The latter shows us that type theory also eats proof theory.  To prove a
-proposition $A$ is the same as producing a term of type $A$.  So we also
+proposition $A$ is the same as constructing a term of type $A$.  So we also
 become completely uninterested in truth.  It is now defined to be types
 being inhabited.
 
@@ -662,24 +888,26 @@ Some think it misleading when $p : P$ to call $p$ a proof of $P$.
 Those people say $p$ is
 a \emph{witness} to or \emph{evidence} of the truth of $P$.  But in MLTT
 and HoTT the truth of $P$ does not mean anything other than that $p : P$ for
-some $P$, that is, does not mean anything other than that $P$ is inhabited.
+some $p$, that is, does not mean anything other than that $P$ is inhabited.
+Hence an inhabitant of $P$ proves $P$.
 
-\subsubsection{Identity Types}
+\subsection{Identity Types}
+\label{sec:identity}
 
 Also like in \citet{bishop}, as mentioned above, equality is a defined
 relation for each type.
 If $A$ is a type, and $x, y : A$, then we write $x =_A y$ to say that
 $x$ and $y$ are equal terms \emph{according to the way equality is defined
 for type $A$.}  But MLTT and HoTT go beyond that in considering this equality\
-to be a type, denoted $(x =_A y)$ or $\text{Id}_A(x, y)$.  And, like any type,
-this type can have terms.
+to be itself a type, denoted $(x =_A y)$ or $\text{Id}_A(x, y)$.
+And, like any type, this type can have terms.
 
 So consider $p, q : (x =_A y)$.
 What are $p$ and $q$?  Different (perhaps) ways $x$ and $y$ can be equal.
 This caused a lot of confusion about MLTT until HoTT arose.
 When we are thinking homotopically, we interpret $p$ and $q$ as paths
 from $x$ to $y$ (as in algebraic topology and homotopy theory).  Then
-it is no surprise at all that there can be more that one path from $x$
+it is no surprise at all that there can be more than one path from $x$
 to $y$.  Similarly, if we are thinking that $x$ and $y$ are proofs of
 $A$ considered as a proposition, it is no surprise that there can be
 different proofs and maybe different ways proofs can be equivalent.
@@ -689,17 +917,21 @@ logic and ZFC-like set theory.
 
 We should stress that, unlike in algebraic topology and homotopy theory,
 these paths $p, q : (x =_A y)$ are not defined in terms of some other concepts.
-Specifically they are not defined as functions $I \to A$ where $I$ is the
+Specifically, they are not defined as functions $I \to A$ where $I$ is the
 unit interval of the real line.  These are synthetic rather than analytic.
 They are just always there for any types.  And they have the properties
-given them for the rules of the type and no other properties.
+given them by the rules of the type and no other properties.
 
 Sometimes, like in the rest of math, we will omit the subscript on the
 equals sign, writing $x = y$ instead of $x =_A y$, when the type
 of $x$ and $y$ is obvious from the context.  But this does not indicate
 a different concept.  In HoTT $x = y$ only makes sense when $x$ and $y$
 have the same type.  If that type is $A$, then it means $x =_A y$.
-In HoTT it makes no sense to ask whether terms of different types are equal.
+In HoTT it makes no sense to ask whether terms of different types are
+equal.\footnote{So like in ETCS and category theory, set membership
+and the subset relation have to be defined otherwise than in ZFC-like
+set theories.  No sets-as-types can have a subset-superset relationship
+(or any kind of part-whole relationship).}
 
 Also, like in the rest of math, equality is an equivalence relation:
 symmetric, reflexive, and transitive.  Reflexivity means $x = x$ for
@@ -731,7 +963,10 @@ that are ordered pairs so should be written $f\bigl((x, y)\bigr)$, which is
 really ugly, so no one does that.  So the notation $f(x, y)$ is really
 ambiguous about whether the type
 is $A \times B \to C$ or $A \to B \to C$.\footnote{The latter means
-$A \to (B \to C)$, the default being $\to$ is right associative.}
+$A \to (B \to C)$, the default being $\to$ is right associative.  In more
+detail $f : A \to (B \to C)$ is a function that maps $a : A$ to a term of
+type $B \to C$, that is, $f(a) : B \to C$ is a function that maps $B \to C$
+so we can evaluate it at any point $b : B$ giving $f(a)(b) : C$.}
 Thus we can rewrite the above as
 $$
    (x = y) \to (y = z) \to (x = z)
@@ -739,8 +974,8 @@ $$
 \citepalias[Lemma~2.1.2 and the recursor for product types,
 equation (1.5.2)]{hott-book}.  This function of two variables, which are
 paths $p : x = y$ and $q : y = z$ is called \emph{path concatentation}
-and written $p \cdot q : x = z$.
-Again, we can think of this the path that is obtained by following $p$
+and written $p \cdot q : (x = z)$.
+Again, we can think of this as the path that is obtained by following $p$
 and then following $q$, but it is really synthetic rather than analytic:
 transitivity requires it is just there.
 
@@ -773,11 +1008,15 @@ a question about whether the type $(p =_{(x =_A y)} q)$ is inhabited,
 and that is a type of paths between paths (homotopies).
 And then if that type has inhabitants $f$ and $g$, we can wonder whether
 $f = g$ but then that is a question about whether the type
-$f =_{(p =_{(x =_A y)} q)} g$ is inhabited, so a question about paths
-between homotopies (homotopies of homotopies) and so forth ad infinitum
+$f =_{\left(p =_{(x =_A y)} q\right)} g$ is inhabited, so a question about paths
+between homotopies (homotopies of homotopies
+or paths between paths between paths) and so forth ad infinitum
 (just like in homotopy theory, Section~\ref{sec:homotopy} above).
 
-\subsubsection{Propositions and Sets}
+The story of identity types continues in Sections~\ref{sec:path-induction}
+and~\ref{sec:higher-induction} below.
+
+\subsection{Propositions and Sets}
 
 A type $A$ is a proposition \citepalias[Section~3.3]{hott-book} if it
 has at most one path component, that is,
@@ -789,9 +1028,10 @@ as either a Cartesian product or as logical for-all ($\forall$).
 Here it is best read as the latter.  A type $A$ is a proposition
 (\citetalias{hott-book} often says \emph{mere} proposition
 to emphasize meaning this concept) if any two points are equal.
-So in a sense it has only one point, although the homotopical interpretation
-is only one path component (every two points are path connected).
-This makes mere propositions quite boring.  The only thing you can say
+So in a sense it has at most one point, although the homotopical interpretation
+is at most one path component (every two points are path connected).
+This makes mere propositions quite boring.
+The only interesting thing you can say
 about them is whether they are inhabited (true) or not (false).
 
 A type $A$ is a set \citepalias[Section~3.1]{hott-book} if every path component
@@ -809,9 +1049,11 @@ are either in the same path component or they aren't and the path
 components are uninteresting (they are contractible).
 
 This may not seem much like ZFC, but the analogy is actually very close.
-These HoTT sets behave much like ETCS sets.  But ETCS has the axiom of choice
+These HoTT sets behave much like ETCS sets \citepalias[Chapter~10]{hott-book}.
+But ETCS has the axiom of choice
 and HoTT doesn't (except if you add it as an extra assumption to prove
-something), so the HoTT sets make a constructive set theory.
+something, Section~\ref{sec:truncation} below),
+so the HoTT sets make a constructive set theory.
 
 An element of a set is, as we said above, just $a : A$, a term of a type.
 But a subset is weird: in one sense just like ZFC and in
@@ -839,9 +1081,10 @@ You may think it inelegant that we are carrying the proofs along with
 the points.  But think again.  The alternative is to search all of mathematics
 for the proof when you need it to continue another proof.  By carrying it
 along the computer proof assistant does not have to search for $p$ when it
-is needed.  This is called \emph{proof-relevant} logic.
+is needed.  This is called \emph{proof-relevant} logic
+(more on this in Section~\ref{sec:truncation} below).
 
-\subsubsection{The Curry-Howard Correspondence}
+\subsection{The Curry-Howard Correspondence}
 \label{sec:curry-howard}
 
 MLTT and HoTT can seem horribly baroque compared to ZFC-like set theories.
@@ -857,7 +1100,7 @@ not needed for them.  It just generalizes them.
 So we copy Table~1 from \citetalias{hott-book} adding a bit from
 Table~1.1 in \citet{rijke} to get our Table~\ref{tab:foo}
 (p.~\pageref{tab:foo}).
-\begin{table}
+\begin{sidewaystable}
 \begin{center}
 \begin{tabular}{cllll}
 Symbol & Types & Logic & Sets & Homotopy \\
@@ -883,7 +1126,7 @@ $A \to 0$ & & negation ($\neg A$) & &
 \end{center}
 \caption{Type Theory, Logic, Set Theory, and Homotopy Theory}
 \label{tab:foo}
-\end{table}
+\end{sidewaystable}
 
 The last line of Table~\ref{tab:foo} does not really fit with the rest,
 but we need it to fill out the Curry-Howard correspondence (how logic fits
@@ -891,9 +1134,14 @@ into type theory).  If $A$ is a type, its negation
 is defined to be the type $A \to 0$.   This function space is inhabited
 if and only if $A$ is not inhabited.  In case $A \equiv 0$ the function
 type $0 \to 0$ has exactly one term: the empty function having a vacuous
-rule.\footnote{If $f : 0 \to 0$, then
-can evaluate $f(x)$ for all $x : 0$ because there are no such $x$.
-But there is such a function (all mathematicians agree).\label{foot:emptyfun}}
+rule.\footnote{If $f : 0 \to 0$, then the rule
+defines $f(x)$ for all $x : 0$ but there are no such $x$.
+But there is such a function $f$
+(all mathematicians agree).\label{foot:emptyfun}
+Also, perhaps even more bizarrely, we can also call this the identity
+function $0 \to 0$, as it does map $x \mapsto x$, but vacuously, there
+being no such $x$.  This makes every type $A$ have an identity function
+$A \to A$.}
 Conversely, in case $A$ is inhabited, there can be no function $A \to 0$
 because there is an $x : A$ but there is no point in the empty type for $f(x)$
 to be.
@@ -908,11 +1156,11 @@ and, still in set theory, if $\mathcal{A} = \set{ A_i : i \in I }$ an
 indexed family of sets then $\prod \mathcal{A} = \prod_{i \in I} A_i$
 is the set of functions $f : I \to \bigcup \mathcal{A}$
 satisfying $f(i) \in A_i$ for all $i$.  This is the general Cartesian
-product of any family of sets.  One statement of the axiom of choice is
+product of any family of sets.  One way to state the axiom of choice is
 that if every element of $\mathcal{A}$ is nonempty, then $\prod \mathcal{A}$
 is nonempty.  This includes the case where $\mathcal{A}$ is the empty family,
-in which case the only inhabitant of $\prod \mathcal{A}$ is the identity
-function on the empty set (the empty function of Footnote~\ref{foot:emptyfun}).
+in which case the only inhabitant of $\prod \mathcal{A}$ is 
+the empty function of footnote~\ref{foot:emptyfun}.
 
 In HoTT ordered pair is a primitive concept.  We do not need an arbitrary
 and bizarre coding into set theory such as the Kuratowski definition
@@ -923,25 +1171,30 @@ of singleton sets is also guaranteed by the pairing axiom plus the axiom of
 extensionality because $\{a\} = \{a, a\}$.}  Then HoTT defines terms of
 type $A \times B$ to be ordered pairs $(a, b)$ with $a : A$ and $b : B$.
 This makes a non-dependent sum type $\sum_{a : A} B$ where $B$ does not
-depend on $A$, the same as the product type $A \times B$.  So there is
+depend on $a : A$, the same as the product type $A \times B$.  So there is
 some redundancy in the basic HoTT operations.
 For the dependent function type, $f$ is a term of type $\prod_{x : A} B(x)$
 if $f$ is a function such that $f(x) : B(x)$ for all $x : A$.  So here we
 are just again reading the $\Pi$-type as logical for-all.
 
 In HoTT \citepalias[Theorem~2.15.7]{hott-book} we do not need the axiom of
-choice in order for a dependent product type to be inhabited.  It is just true.
+choice in order for a dependent product type to be inhabited.
+It is just true.\footnote{We still need to assume $B(x)$ is inhabited for
+all $x : A$.  But then $\prod_{x : A} B(x)$ is inhabited without the axiom
+of choice.}
 However, this does not have the all of the logical consequences of the
 classical axiom of choice.  (More on this after some preliminaries.)
 
-\subsubsection{Propositional Truncation}
+\subsection{Propositional Truncation}
+\label{sec:truncation}
 
-If $A$ is a type, then there is another type $\lVert A \rVert$,
+If $A$ is a type, then there is another type $\proptrunc{A}$,
 called the \emph{propositional truncation} of $A$, defined
-as if $a : A$ then $a : \lVert A \rVert$ (the rules for producing terms
-of these types are the same) but if $a, b : \lVert A \rVert$, then $a = b$
-(so equality is redefined so that all terms of the latter are equal).
-This makes $\lVert A \rVert$ a mere proposition, regardless of what $A$ is.
+as follows.  There is a function $\termtrunc{\fatdot} : A \to \proptrunc{A}$
+(so for each $a : A$ there is $\termtrunc{a} : \proptrunc{A}$),
+and for all $a, b : \proptrunc{A}$, we have $a = b$
+(so equality in $\proptrunc{A}$ is defined so that all terms are equal).
+This makes $\proptrunc{A}$ a mere proposition, regardless of what $A$ is.
 
 In Table~\ref{tab:foo} we were a bit cavalier about two of the lines.
 Various theorems in \citetalias{hott-book} prove that the operations take
@@ -951,42 +1204,49 @@ but the sum type $1 + 1$ has two elements that
 are not equal.  So it isn't a proposition.
 So if we want to get what people usually
 think of as logic, we have to squash the sums.  Logical or becomes
-$\lVert A + B \rVert$ and the dependent sum type (logical exists) becomes
-$\left\lVert \sum_{x : A} B(x) \right\rVert$
-\citetalias[Definition~3.7.1]{hott-book}.
+$\proptrunc{A + B}$ and the dependent sum type (logical exists) becomes
+$\bigproptrunc{\sum_{x : A} B(x)}$
+\citepalias[Definition~3.7.1]{hott-book}.
 
 But \citetalias[Section~3.7]{hott-book}, also argues against the routine
 use of propositional truncation.  If $P$, $Q$, and $R$ are mere propositions
-and we want an implication $\lVert P + Q \rVert \to R$ it suffices to prove
+and we want an implication $\proptrunc{P + Q} \to R$ it suffices to prove
 $P + Q \to R$ because the recursion principle for propositional truncation
-gives us the implication $\lVert P + Q \rVert \to R$.
+gives us the implication $\proptrunc{P + Q} \to R$.
 
-What is the difference?  To prove $\lVert P + Q \rVert$, we prove $P$ or prove
+What is the difference?  To prove $\proptrunc{P + Q}$, we prove $P$ or prove
 $Q$ and forget which one.  To prove $P + Q$, we prove $P$ or prove
-$Q$ and remember which one.  Mathematically, there is no
-point to the forgetting.
+$Q$ and remember which one.\footnote{And how does the sum type remember?
+A term of type $A + B$ has the form $\inl(a)$ for some $a : A$
+or $\inr(b)$ for some $b : B$ \citepalias[Section~1.7]{hott-book}.
+In the first case, it is part of $\inl(a)$ that $a : A$, and similarly
+for the second case.}
+Mathematically, there is no point to the forgetting.
 
 And similarly for the dependent sum type, which we read as logical exists.
 This is similar to the discussion of the subset relation \eqref{eq:subset}
 above.
 A term of $\sum_{x : A} P(x)$ is an ordered pair $(x, p)$ where
 $x : A$ and $p$ is a proof of the proposition $P(x)$.  A term of its
-propositional truncation forgets both $x$ and $p$ (more precisely,
-for any $y : A$ and $q : P(y)$ we
-have $(x, p) =_{\lVert \sum_{x : A} P(x) \rVert} (y, q)$.)
+propositional truncation forgets both $x$ and $p$.\footnote{More precisely,
+for any $y : A$ and $q : P(y)$ we have $\termtrunc{(x, p)}
+=_{\proptrunc{\sum_{x : A} P(x)}} \termtrunc{(y, q)}$.}
 Mathematically, there is no point to the forgetting (propositional truncation).
 
 So \citetalias{hott-book} never unnecessarily uses propositional truncation.
 This gives its logic a different feel from the logic taught in philosophy
 classes.
+Our phrase "mathematically, there is no point to the forgetting" is called
+using \emph{proof-relevant mathematics} (or proof-relevant logic) by
+\citetalias{hott-book} (Section~1.11).
 
 Now we can also clarify the difference between the so-called HoTT axiom
 of choice mentioned above and the classical axiom of choice.  This is
 \citepalias[Lemma~3.8.2]{hott-book}, if $A$ is a set and $B(x)$ is a set
 for all $x : A$, then
 $$
-   \left( \prod_{x : A} \left\lVert B(x) \right\rVert \right) \to 
-   \left\lVert \prod_{x : A} B(x) \right\rVert
+   \left( \prod_{x : A} \bigproptrunc{B(x)} \right) \to 
+   \bigproptrunc{\prod_{x : A} B(x)}
 $$
 is read just like the classical axiom of choice: if each $B(x)$
 is inhabited, then so is $\prod_{x : A} B(x)$.
@@ -995,7 +1255,8 @@ But we repeat that without the propositional truncation this is just true
 both sides of the arrow are the same, and any function type $A \to A$ is
 inhabited by the identity function).
 
-\subsubsection{Homotopy Equivalence}
+\subsection{Homotopy Equivalence}
+\label{sec:homotopy-equivalence}
 
 The point of this section is that in HoTT isomorphism is too strong a concept.
 Recall that the identity function $\idfun_A : A \to A$ maps $x \mapsto x$.
@@ -1008,7 +1269,8 @@ $$
 that $=$ may mean only equal up to homotopy, depending on how the types
 are defined).
 This looks like the HoTT analog of the regular definition of isomorphism
-(we have to remember that $=$ means $=_{(A \to A)}$ or $=_{(B \to B)}$
+(Section~\ref{sec:iso} above, except
+we have to remember that $=$ means $=_{(A \to A)}$ or $=_{(B \to B)}$
 as the case may be, a defined equivalence relation).
 
 The trouble is, that (surprisingly) this is not a mere proposition
@@ -1034,54 +1296,77 @@ $$
    = (h \circ f) \circ g = \idfun_A g = g
 $$
 Hence $h = g$.  Moreover, this implies that any two-sided inverses must
-be equal, as was proved in Footnote~\ref{foot:identity} above.}
-and they are in set theory \citepalias{hott-book}.
+be equal, as was proved in footnote~\ref{foot:identity} above.}
+and they are in set theory \citepalias[Section~4.6]{hott-book}.
 For any function $f$, $\binv(f)$ is a mere proposition
-\citepalias[4.3.2]{hott-book} and this is the definition that is the
+\citepalias[Theorem~4.3.2]{hott-book} and this is the definition that is the
 key to the whole theory.
 
 Now we define $\isEquiv(f)$ to be the same as $\binv(f)$.  And we
 write $A \simeq B$ when $f : A \to B$ and $\isEquiv(f)$.
 
-\subsubsection{Universes and Univalence}
+In the Notes for its Chapter~4 \citetalias{hott-Book} explains that
+the quasi-inverse property being different from homotopy
+equivalence was well known in homotopy theory from its inception, long
+before HoTT arose.  (But of course HoTT is a synthetic theory and classical
+homotopy theory an analytic theory that needs real analysis and point set
+topology to get off the ground.)
+
+\subsection{Universes and Univalence}
+\label{sec:univalence}
 
 In HoTT we allow types to have types.  This again raises the specter of
-Russell's paradox.  So we collect types into universe types.  Then we can
-consider a dependent type as a function $B : A \to \mathcal{U}$.
-To be careful we cannot have $\mathcal{U} : \mathcal{U}$ because that
+Russell's paradox.  So we collect types into universe types $\universe$.
+Then we can
+consider a dependent type as a function $B : A \to \universe$.
+To be careful we cannot have $\universe : \universe$ because that
 would allow Russell's paradox.  So we might have to have a sequence of
 ever larger universes.  But normally, we do not need to worry about that
-(and won't here).
+\citepalias[Section~1.3]{hott-book} and won't here.
 
-Then we can consider for $A, B : \mathcal{U}$ the equality
-type $(A =_\mathcal{U} B)$.  And it is provable in MLTT
-\citepalias[Lemma~2.10.1]{hott-book} for $A, B : \mathcal{U}$ there
-exists a function defined in the proof of the lemma
+Then for $A, B : \universe$ we can consider the equality
+type $(A =_\universe B)$.  And it is provable in MLTT
+\citepalias[Lemma~2.10.1]{hott-book} for $A, B : \universe$ there
+exists a function defined in the proof of the cited lemma
 $$
-   \text{idToEquiv} : (A =_\mathcal{U} B) \to (A \simeq B)
+   \text{idtoequiv} : (A =_\universe B) \to (A \simeq B)
 $$
 Voevodsky proved that it is consistent to assume as an axiom that this
-function is an equivalence, that is,
+function is an equivalence
 $$
-   (A =_\mathcal{U} B) \simeq (A \simeq B)
+   (A =_\universe B) \simeq (A \simeq B)
 $$
+which says $\text{idtoequiv}$ has a homotopy inverse
+$$
+   \text{ua} : (A \simeq B) \to (A =_\universe B)
+$$
+($\text{ua}$ for univalence axiom).  And this function can be used to
+transfer properties from $A$ to $B$, like any other function.
+It says that whatever you have proved about $A$ is also proved about $B$.
+
 So this is the high water mark of the HoTT view of equivalence.  It
 is sometimes misunderstood as saying that isomorphic types are equal,
-but it is not that isomorphism is being reduced to equality (some sort
-of skeletality condition) but rather than equality is being expanded to
+but that is wrong in two ways.  First, isomorphism is a stronger property
+than (homotopy) equivalence.  Second, it is not that equivalence is being
+reduced to equality (some sort
+of skeletality condition) but rather that equality is being expanded to
 be equivalent to equivalence.
 
-We can now also clarify the status of the law of excluded middle (LEM) in
+The univalence principle when applied to mere propositions
+(propositional extensionality) was present in the early type theories
+of Russell and Church \citepalias[Notes for Chapter~2]{hott-book}.
+
+We can now also clarify the status of LEM in
 HoTT.  The following statement
 $$
-   \prod_{A : \mathcal{U}} \bigl(A + (A \to 0)\bigr)
+   \prod_{A : \universe} \bigl(A + (A \to 0)\bigr)
 $$
 is incompatible with the univalence axiom
 \citepalias[Theorem~3.2.2]{hott-book}.  So we cannot have that.
 
 But we can consistently assume \citepalias[Section~3.4]{hott-book}
 $$
-   \prod_{A : \mathcal{U}} \Bigl(\isProp(A) \to \bigl(A + (A \to 0)\bigr)
+   \prod_{A : \universe} \Bigl(\isProp(A) \to \bigl(A + (A \to 0)\bigr)
    \Bigr)
 $$
 However, we do not routinely assume this (sometimes denoted $\text{LEM}_{-1}$)
@@ -1089,37 +1374,48 @@ because it makes our theorems not applicable to large parts of contemporary
 mathematics.
 
 As a simple example, notice that this document always says inhabited rather
-than nonempty (= not empty, so inhabited = not not empty, and the classical
+than nonempty, and
 equivalence of these two concepts is literally double negation removal,
-which is equivalent to LEM).  Often, just changing the way you say things
+which is equivalent to LEM.  Often, just changing the way you say things
 allows for constructive mathematics.
 
-\subsubsection{Homotopy Levels}
+\subsection{Function Extensionality and Univalence}
 
-This section is tricky and probably should be skipped at first reading.
+The following is provable in MLTT. Given a type $A$,
+a type family $B : A \to \universe$,
+and functions $f, g : \prod_{x : A} B(x)$,
+$$
+   (f = g) \to \prod_{x : A} \bigl( f(x) =_{B(x)} g(x) \bigr)
+$$
+that is, $f = g$ implies $f(x) = g(x)$ for all $x$.
+The reverse implication, that this function (implication)
+is a homotopy equivalence, is not provable in MLTT.
 
-Mathematicians see a pattern in the definitions of (mere) propositions
+This reverse implication (that $f(x) = g(x)$ for all $x$ implies $f = g$)
+is called the axiom of \emph{function extensionality}
+\citepalias[Axiom~2.9.3]{hott-book}.
+It is hard to do any mathematics without this axiom, which is much more
+fundamental than LEM or "true" equality (equality in the logic).
+All of mathematics assumes it.
+However, HoTT does not assume this as an axiom because it implied
+by the univalence axiom \citepalias[Section~4.9]{hott-book}.
+
+Of course, first-order classical logic plus set theory also
+proves the function extensionality property because it just defines
+functions to be extensional relations.
+
+\subsection{Homotopy Levels}
+
+There is a pattern in the definitions of (mere) propositions
 and (mere) sets in HoTT.
 
-They start with contractibility.  A type $A$ is contractible
+Start with contractibility.  A type $A$ is contractible
 \citepalias[Section~3.11]{hott-book}
 if it has exactly one path component, that is,
 \begin{equation} \label{eq:contractible}
    \isContr(A) :\equiv \sum_{a : A} \prod_{b : A} (a =_A b)
 \end{equation}
 read there exists $a$ in $A$ such that for all $b$ in $A$ we have $a =_A b$.
-
-When read homotopically, this says a bit more than path connected.
-If $\isContr(A)$ is true, this is the same as it being inhabited,
-which means it has an element, and an element of the dependent sum
-type \eqref{eq:contractible}
-is a pair $(a, f)$, where $a : A$ and $f : \prod_{b : A} (a =_A b)$,
-and an element of this product type is a function $f : b \mapsto p$,
-where $p : a =_A b$, which is a path from $a$ to $b$.
-But the homotopic reading says this variation is continuous,
-so $f$ is a homotopy that maps the constant path (one endpoint is always $a$)
-to the identity path (the other endpoint ranges over $b : A$).
-And in algebraic topology this is a stronger property than path connectedness.
 
 Now for the pattern.  We define homotopy-$n$-types
 \citepalias[Chapter~7]{hott-book}
@@ -1136,55 +1432,427 @@ by
 The bizarre idea to start counting at $- 2$ is to match up with how
 homotopy levels were defined in homotopy theory before HoTT was invented.
 
-It is then a theorem
-\citepalias[Lemma~???]{hott-book} that $\isProp(A)$ is equivalent (in a sense
-to be discussed in Section~\ref{sec:equivalence} below)
-to $\text{is-$(-1)$-type}(A)$.  Since both sides here are propositions,
-this merely means there is a function (read as logical implication) from
-each to the other.
+It is then a theorem \citepalias[Lemma~3.11.10]{hott-book} that
+$$
+   \isProp(A) \simeq \text{is-$(-1)$-type}(A)
+$$
+Then it is obvious that
+$$
+   \isSet(A) \simeq \text{is-$0$-type}(A)
+$$
+And we can go on naming levels
+$$
+   \text{isGroupoid}(A) :\equiv \text{is-$1$-type}(A)
+$$
+This makes sense because we think of $a : A$ as the objects of the groupoid
+and $p : (x =_A y)$ as morphisms, in which case the laws for identity types
+(Section~\ref{sec:identity} above) are the category laws
+(Section~\ref{sec:category} above) with the additional fact that any such $p$
+is invertible (hence an isomorphism when considered a morphism) by the symmetry
+requirement on paths.
 
-\REVISED
+But then we run out of names.  A 2-type is what (if you have to make up
+a name) a 2-groupoid, (having nontrivial paths between paths).
+A 3-type is what (if you have to make up
+a name) a 3-groupoid, (having nontrivial paths between paths between paths).
+And so on.
 
-so we generalize: we say that sets are homotopy zero types and
-\citep[Chapter~7]{hott-book}
-\MOVED[equation]
-so by induction we define $n$-types for all natural numbers $n$,
-except it is clear from the above that we can start lower.
-If we let $(-2)$-types be contractible types
-and $(-1)$-types be mere propositions, then the induction works
-starting at $-2$.
-This little bit of craziness is to match up with the way homotopy
-levels are numbered in homotopy theory.
+MLTT cannot prove that any homotopy $n$-levels above sets exist.
+HoTT can prove this using univalence \citepalias[Example~3.1.9]{hott-book}.
+Not every type is an $n$-type for some $n$.
+An example is the two-sphere $S^2$ (like the surface of a globe).
+Such a type is then called an $\infty$-groupoid in (higher) category theory.
+The HoTT book does not actually prove this, but does construct
+\citepalias[Example~8.8.6]{hott-book} a type that is not a homotopy $n$-type
+for any $n$.
 
-We need a proof that the first step of this recursion works,
-that we go from contractibles to propositions using \eqref{eq:type-recursion}
-in case $n = -2$, that is, we need to prove
-\begin{equation} \label{eq:proposition-too}
-\begin{split}
-   \isProp(A)
-   & \equiv
-   \prod_{x, y : A} \isContr(x =_A y)
+HoTT has \citepalias[Section~7.3]{hott-book} an operation
+$A \mapsto \proptrunc{A}_n$ that gives for any type $A$ its best approximation
+(in some sense) that is a homotopy $n$-type.  This construction is due
+to Voevodsky and corresponds to the $n$-th Postnikov section in classical
+homotopy theory.  When applied to a type $A$ that is not a homotopy $n$-type
+for any $n$, this gives $\proptrunc{A}_n$ inhabiting homotypy level $n$.
+
+All of this requires univalence (or something like it).
+It is consistent with MLTT to assume that all types are sets
+\citepalias[Remark~8.1.17 and Section~7.2]{hott-book}.
+An equivalent assumption is that for $x, y : A$ and $p, q : x =_A y$
+we have $p = q$, which is called \emph{uniqueness of identity proofs}
+(UIP).\footnote{Propositions-as-types says $p$ and $q$ are proofs
+of the proposition $x = y$.}
+Another equivalent assumption is Streicher’s Axiom K, which asserts
+for $x : A$ and $p : x =_A x$ we have $p = \refl_x$.
+We stress that HoTT assumes none of UIP or Axiom K or all types are sets.
+The whole point of HoTT is not to dumb down MLTT to only do mathematics
+as it was understood in 1900.
+
+\subsection{The Natural Numbers and Finiteness}
+
+In HoTT the natural number type $\nats$ has two constructors
+\begin{align*}
+   0_\nats & : \nats
    \\
-   & \equiv
-   \prod_{x, y : A}
-   \sum_{p : x =_A y} \prod_{b : x =_A y} (p =_{x =_A y} q)
-\end{split}
+   \successor & : \nats \to \nats
+\end{align*}
+The first subscripts the term $0_\nats$ to distingush it from the empty
+type 0.  Every term belongs to a distinct type.
+The second is a function.  This makes $\nats$ to be the sequence
+$$
+   0_\nats,
+   \successor(0_\nats),
+   \successor(\successor(0_\nats)),
+   \successor(\successor(\successor(0_\nats))),
+   \ldots
+$$
+The idea is that an inductive type like this is freely generated by
+the constructors.  But to actually use the type we also need elimination
+rules.  For an inductive type like this, the most general elimination rule,
+called the \emph{dependent eliminator} or the \emph{induction principle},
+is a function
+\citepalias[Section~1.9]{hott-book}
+\begin{equation}
+\label{eq:natural-numbers-induction}
+   \inductor_\nats : \prod_{C : \nats \to \universe}
+   C(0_\nats) \to \left( \prod_{n : \nats} C(n) \to C(\successor(n)) \right)
+   \to \prod_{n : \nats} C(n)
 \end{equation}
-and we notice the right-hand side of \eqref{eq:proposition-too} is not
-the same as the right-hand side of \eqref{eq:proposition}.
-I don't even think \eqref{eq:proposition-too} is correct in the sense
-that $\equiv$ means definitionally equal in HoTT and these may be only
-homotopy equivalences \citet[Chapter~4]{hott-book}.  Or perhaps I should
-say that we can define $\isProp$ the way \eqref{eq:proposition} does or
-as \eqref{eq:proposition-too} does.
+having defining equations
+\begin{subequations}
+\begin{align}
+   \inductor_\nats(C, c_0, c_s, 0_\nats) & :\equiv c_0
+   \label{eq:nats-induction-base}
+   \\
+   \inductor_\nats(C, c_0, c_s, \successor(n)) & :\equiv
+   c_s\bigl(n, \inductor_\nats(C, c_0, c_s, n) \bigr)
+   \label{eq:nats-induction-succ}
+\end{align}
+\end{subequations}
+This is a little hard to decode, so let's be pedantic.
+\begin{itemize}
+\item $\inductor_\nats$ is a $\Pi$-type,
+    hence a dependent function whose argument is the subscript
+    of the $\Pi$, here $C : \nats \to \universe$ and the value is a function
+$$
+   C(0_\nats) \to \left( \prod_{n : \nats} C(n) \to C(\successor(n)) \right)
+   \to \prod_{n : \nats} C(n)
+$$
+   (the rest of the expression).
+   So $\inductor_\nats(C)$ is a term of this type.
+\item And this is a function whose argument is $c_0 : C(0_\nats)$ and
+    whose value is a function
+$$
+   \left( \prod_{n : \nats} C(n) \to C(\successor(n)) \right)
+   \to \prod_{n : \nats} C(n)
+$$
+    So $\inductor_\nats(C)(c_0)$ is a term of this type.
+\item And this is a function $c_s$ whose argument is a $\Pi$-type
+    (another dependent function) which for $n : \nats$ is a function
+    $c_s(n) : C(n) \to C(\successor(n))$ and whose value is yet another
+    $\Pi$-type.  So $\inductor_\nats(C)(c_0)(c_s)$ is a term of type
+    $n \mapsto C(n)$.
+\item
+    So $\inductor_\nats(C)(c_0)(c_s)(n)$ is a term of type $C(n)$.
+\end{itemize}
+Hence in summary, we have a function $\inductor_\nats(C)(c_0)(c_s)(n)$,
+which we can also
+write as a function of four arguments $\inductor_\nats(C, c_0, c_s, n)$
+and which maps to $C(n)$.
+The defining equations \eqref{eq:nats-induction-base} and
+\eqref{eq:nats-induction-succ} say that if we have
+\begin{align*}
+   c_0 & : C(0)
+   \\
+   c_s & : \prod_{n : \nats} \bigl( C(n) \to C(\successor(n)) \bigr)
+\end{align*}
+Then we have $\prod_{n : \nats} C(n)$, that is, the function $n \mapsto C(n)$
+given by the induction principle.
+Reading the $\Pi$-types as logical for-all, we have classical mathematical
+induction.
 
-This is all very mysterious, so let us have some simplification.
-\Citet[Lemma~3.11.3(iii)]{hott-book} says $\isContr(A)$ implies $A \simeq 1$,
-where $\simeq$ is the symbol for homotopy equivalence.
+Now what are we to make of this?  This is exactly the same as
+Peano's axioms for arithmetic except for here $C : \nats \to \universe$
+is any type family, whereas the Peano axioms only apply to mere propositions,
+that is, $C(n)$ can here be any type, but for the Peano axioms it must be
+a mere proposition.  There is also the difference that the Peano axioms
+are based on classical logic and this is based on propositions-as-types
+(intuitionistic, proof-relevant logic).
 
-\section{The Natural Numbers and Finiteness}
+The point is that HoTT proves all and only what Peano arithmetic proves
+about the natural numbers.  And all of this is intensional and synthetic
+rather than extensional and analytic.  There is nothing in any of this
+about an intended model or any model or models.  Just constructions/proofs.
 
-In HoTT the natural number type $\nats$
+\subsection{Path Induction}
+\label{sec:path-induction}
+
+Identity types have an induction principle
+described by \citetalias[Section~1.12]{hott-book} as follows.
+Given a dependent type family
+$$
+   C : \prod_{x, y : A} (x =_A y) \to \universe
+$$
+and a dependent function
+$$
+   c : \prod_{x : A} C(x, x, \refl_x)
+$$
+there is a dependent function
+$$
+   f : \prod_{x, y : A} \prod_{p : (x =_A y)} C(x, y, p)
+$$
+such that
+$$
+   f(x, x, \refl_x) :\equiv c(x)
+$$
+Put in the form of a single function, the induction principle is
+$$
+   \inductor_{=_A} :
+   \prod_{C : \prod_{x, y : A} (x =_A y) \to \universe}
+   \left( \prod_{x : A} C(x, x, \refl_x) \right)
+   \to
+   \prod_{x, y : A} \prod_{p : (x =_A y)} C(x, y, p)
+$$
+
+Admittedly, this is hard to read and hard to follow
+(the \citetalias{hott-book} says ``most subtile'').
+Read slopply, path induction says that if you prove a property for
+reflexivity paths, then you have proved it for all paths.
+And (also confusingly) many proofs read this way: by induction we may
+assume $p$ is $\refl_x$, then whatever we are supposed to check checks,
+QED.
+
+The subtile mistake \citepalias[Remark 1.12.1]{hott-book} is that
+the input is the dependent family of types $(x, y) \mapsto (x =_A y)$,
+so $x$ and $y$ must vary freely over $A$ for $\inductor_{=_A}$ to apply.
+If $x$ is fixed (not varying) then checking something about $\refl_x$
+proves nothing.
+
+There is a variant of path induction called \emph{based path induction}
+in which only one endpoint of the path is freely varying while the other
+end is fixed; \citetalias{hott-book} then proves
+this is equivalent to general path induction.  But fixing both endpoints
+still proves nothing.
+
+Chapter~2 of \citetalias{hott-book} shows that all of the properties
+of identity types discussed in Section~\ref{sec:identity} above are
+provable from path induction.  And many more properties besides.
+
+For example, Section~2.2 of \citetalias{hott-book} is titled ``functions
+are functors'' although, strictly speaking, they are not.  What is meant
+is that functions act functorially on paths.
+Lemma~2.2.1 of \citetalias{hott-book} says that for any function $f : A \to B$
+and any $x, y : A$ there is a function
+\begin{subequations}
+\begin{equation} \label{eq:path-induction}
+   \text{ap}_f : (x =_A y) \to (f(x) =_B f(y))
+\end{equation}
+such that for each $x : A$ we have
+\begin{equation} \label{eq:path-induction-too}
+   \text{ap}_f(\refl_x) \equiv \refl_{f(x)}
+\end{equation}
+\end{subequations}
+(a generalization of this result appears in Section~\ref{sec:lifting} below).
+
+Thus every path $p$ from $x$ to $y$ is lifted to a path $\text{ap}_f(p)$
+from $f(x)$ to $f(y)$.  And all of this is synthetic rather than analytic,
+just there because of path induction.  We can read $\text{ap}_f$ as meaning
+applying $f$ to a path.  Of course, the argument of $f$ is not a path.
+$f$ takes arguments $a : A$.  And the path is not made out of points of $A$.
+Its endpoints are points of $A$, but that is all.\footnote{But if a path were
+(as it was before HoTT) a function $p : I \to A$, where $I$ is the unit interval
+of the real line, then this lifted path would just be $f \circ p$.}
+
+As an example of the opaqueness of path induction, we copy
+\citetalias{hott-book}'s second proof of the application-to-path lemma.
+To define $\text{ap}_f$ for all $p : x = y$, it suffices, by induction,
+to assume $p$ is $\refl_x$, in which case $\text{ap}_f(p)$ is
+given by \eqref{eq:path-induction-too}.
+This is a valid application of path induction because $x$ and $y$ are
+free rather than fixed.
+
+It is remarkable that \citet{martin-lof-mltt} figured out path induction
+from first principles of constructive logic without any recognition of
+the homotopy motivation.  \citet{ladyman-presnell} are not philosophically
+satistfied with \citeauthor{martin-lof-mltt}'s justification and provide
+their own pre-mathematical (and thus philosophical)
+justification.\footnote{Their argument is a combination of what
+\citetalias[Section~1.12]{hott-book} calls ``indiscernability of identicals''
+(equals may be substituted for equals) and (Remark~1.12.1) ``a path
+$p : x = x$ may be not equal to reflexivity as an element of $( x = x )$,
+but the pair $(x, p)$ will nevertheless be equal to the pair $(x, \refl_x)$
+as elements of $\sum_{(y:A)} (x = y)$.  And this is just the point we said
+about at least one endpoint of the path must vary freely to use path induction.
+\citeauthor{ladyman-presnell} recast this so as to satisfy them as being
+pre-mathematical, hence fundamental.}
+The fact that identity types in MLTT can be as complicated as this
+section describes was first shown by \citet{hofmann-streicher}.
+
+\subsection{Higher Inductive Types}
+\label{sec:higher-induction}
+
+More complicated instances of induction are called \emph{higher induction}
+when there are constructors for not only terms of a type but also paths
+(identities).   We have already met one of these, propositional truncation,
+which has two constructors (repeated from Section~\ref{sec:truncation} above)
+\begin{align*}
+   \termtrunc{\fatdot} & : A \to \proptrunc{A}
+   \\
+   p & : \text{$(x =_{\proptrunc{A}} y)$ whenever $x, y : \proptrunc{A}$}
+\end{align*}
+The first constructor says\
+\begin{itemize}
+\item if $A$ is a type, then $\proptrunc{A}$ is a type, and
+\item if $a : A$, then $\termtrunc{a} : \proptrunc{A}$.
+\end{itemize}
+The second constructor just formalizes what we already said
+(Section~\ref{sec:truncation} above):
+we do propositional truncation by redefining
+equality to make all points in the truncation equal.
+
+Now for something new and nontrivial, some synthetic algebraic topology.
+The (topological) circle, denoted $S^1$ because it is the one-dimensional
+analog of the (two-dimensional surface of a three-dimensional) sphere
+(denoted $S^2$) is defined in HoTT as the type with two constructors
+\begin{align*}
+   \sbase & : S^1
+   \\
+   \sloop & : \sbase =_{S^1} \sbase
+\end{align*}
+This is remarkable because in analytic geometry, you need the real numbers
+$\real$ and the plane $\real^2$ to define a circle.  And even in synthetic
+(Euclidean) geometry, you need some set-up (Euclid's axioms).
+Here we have only types and identity types.
+
+One might wonder how we know that $\sloop$ is not $\refl_\sbase$,
+but this is provable constructively using univalence
+\citepalias[Lemma~6.4.1]{hott-book}.
+
+Now by equality being reflexive, symmetric, and transitive, we can
+inductively define
+\begin{alignat*}{2}
+   \sloop^0 & :\equiv \refl_\sbase
+   \\
+   \sloop^1 & :\equiv \sloop
+   \\
+   \sloop^{n + 1} & :\equiv \sloop^n \cdot \sloop,
+        & \qquad & n \ge 1
+   \\
+   \sloop^{- (n + 1)} & :\equiv \sloop^{- n} \cdot \sloop^{-1},
+        & \qquad & n \ge 1
+\end{alignat*}
+Let $\ints$ denote the type of integers \citepalias[which we haven't defined
+but is defined in the usual way from the
+natural numbers,][Section~6.10]{hott-book}.  Then we have a map
+$\ints \to \pi_1(S^1)$ given by $n \mapsto \sloop^n$, where $\pi_1(S^1)$
+denotes the fundamental group of $S^1$ whose elements are loops with the
+same basepoint and whose group operation is loop concatenation.
+
+We know from algebraic topology that the fundamental group of $S^1$ is $\ints$
+(up to isomorphism of groups, with the group operation for $\ints$ being
+addition) \citepalias[Table~8.1]{hott-book}.  Thus we want to prove that
+the map $n \mapsto \sloop^n$ is a group isomorphism.
+For the first step, it is easily verified that it is a group homomorphism,
+that $\sloop^m \cdot \sloop^n = \sloop^{m + n}$.
+
+And then comes the shocker.  Or perhaps not shocking at all.  Math is hard.
+In order to prove this function is an isomorphism,
+\citetalias[Section~8.1]{hott-book} takes more than seven pages of very dense
+mathematics (they do give three proofs though, one the classical
+proof from algebraic topology translated into HoTT,
+and two HoTT-friendly proofs).
+They also prove that the loop space of $S^1$ is a set, so all higher homotopy
+groups (above the first discussed above) are trivial.
+And everything they do is synthetic homotopy theory.
+There is no use whatsoever of real analysis or point set topology.
+
+For our next trick, we define $S^2$ as a higher inductive type
+with constructors
+\begin{align*}
+   \sbase & : S^2
+   \\
+   \ssurf & : \refl_\sbase =_{\left(\sbase =_{S^2} \sbase\right)} \refl_\sbase
+\end{align*}
+That is, like $S^1$ we have a basepoint called $\sbase$.
+But, unlike $S^1$, we skip one-dimensional paths and put in a two-dimensional
+surface called $\ssurf$, which is a path between paths ($\refl_\sbase$ to
+itself).  That's it.  Like $S^1$ there are no more constructors or rules.
+
+But, unlike $S^1$, this type is much more complicated homotopically.
+It has nontrivial homotopy groups of all orders
+\citepalias[Table~1]{hott-book}.
+And, of course, this means it has nonreflexive identities (paths) of all
+orders.  So where do they come from if there are no constructors for them?
+This involves what seems to be a digression, but isn't (following section).
+
+\subsection{Path Lifting}
+\label{sec:lifting}
+
+Here we want to reconsider dependent sum types $\sum_{x : A} B(x)$.
+We have already seen that propositions-as-types says we read this as
+logical exists (when each $B(x)$ is a mere proposition).
+And we have already seen that sets-as-types says we read this as
+subset (when each $B(x)$ is a mere set).
+Table~\ref{tab:foo} says that in general, we are supposed to read this
+as ``total space.''  So what is that?
+
+In algebraic topology, if we have a morphism $f : X \to Y$, where morphism
+means \emph{continuous function} in the category of topological spaces,
+and if $f$ is \emph{surjective}, which means for every $y : Y$ there exists
+$x : X$ such that $y = f(x)$, then we can think of this in two ways.
+
+The first way is the obvious one, this is just like any other function.
+The continuity part is, for example, $x_n \to x$ implies $f(x_n) \to f(x)$.
+
+The second way is the backwards one.  Define for $y : Y$,
+the \emph{fiber} of $f$ over $y$ to be
+$$
+   f^{-1}(y) = \set{ x : X : y = f(x) }
+$$
+This notation $f^{-1}$ conflicts with the other defined
+in Section~\ref{sec:iso} above.  Sometimes I say that
+the Section~\ref{sec:iso} concept is the point-to-point inverse,
+which exists if and only if the function is an isomorphism,
+and this concept is the point-to-set inverse
+(or point-to-fiber inverse), which exists for
+any function.\footnote{There is a also a set-to-set inverse
+$$
+   f^{-1}(B) = \set{ x \in X : f(x) \in B }
+$$
+where $B \subset Y$, which we can translate into HoTT as
+$$
+   f^{-1}\left(\prod_{y : Y} B(y)\right) :\equiv
+   \prod_{x : X} B\bigl(f(x)\bigr)
+$$
+where $B : Y \to \universe$.
+\label{foot:set-to-set}
+}
+But real mathematicians happily deal with the ambiguity of notation
+(although occasionally apologizing for ``abuse of notation'') and don't
+say any such thing about the notation.
+
+Now the surjectivity of $f$ says every fiber $f^{-1}(y)$ is inhabited,
+and the continuity of $f$ says the fibers are pasted together continuously
+to make $X$.\footnote{More precisely, the definition of continuous function
+in general topology (also called point set topology) is $f^{-1}(B)$ is an
+open subset of $X$ whenever $B$ is an open subset of $Y$, where $f^{-1}$
+is the set-to-set inverse of footnote~\ref{foot:set-to-set}.}
+
+Now for the HoTT stuff.  Table~\ref{tab:foo} also says the homotopy
+interpretation of a general dependent type family $B : A \to \universe$
+is a ``fibration.''  And that means analogous to what this section is
+calling the backwards view of a continuous function as
+a map $y \mapsto f^{-1}(y)$.  So we have a space (type) $Y$, and a total
+space $X \equiv \prod_{y : Y} B(y)$ where $B(y)$ is now interpreted as the
+fiber over $y : Y$ and the fibers are pasted together continuously to make $X$,
+although in HoTT the ``continuously'' is a mere analogy --- synthetic rather
+than analytic --- it doesn't mean anything other than what
+the rules of HoTT for the types involved make it mean.
+
+So now we are ready for Lemma~2.3.1 {in} \citetalias{hott-book}.
+For any function (dependent type family) $F : A \to B$,
+any $x, y : A$ and any $p : x =_A y$, there is a function
+$$
+   p_{\textstyle *} : F(x) \to F(y)
+$$
 
 \begin{thebibliography}{}
 
@@ -1193,7 +1861,20 @@ Aluffi, P. (2009).
 \newblock \emph{Algebra, Chapter 0}.
 \newblock American Mathematical Society, Providence, RI.
 
-\bibitem[Bauer(2019)]{bauer}
+\bibitem[Aschbacher(2004)]{aschbacher}
+Aschbacher, M. (2004).
+\newblock The status of the classification of the finite simple groups.
+\newblock \emph{Notices of the American Mathematical Society}, \textbf{51},
+    736--740.
+
+\bibitem[Bauer(2017)]{bauer-constructive}
+Bauer, A. (2017).
+\newblock Five stages of accepting constructive mathematics.
+\newblock \emph{Bulletin (New Series) of the American Mathematical Society},
+    \textbf{54}, 481--498.
+\newblock \doi{10.1090/bull/1556}.
+
+\bibitem[Bauer(2019)]{bauer-hott}
 Bauer, A. (2019).
 \newblock Introduction to homotopy type theory.
 \newblock A doctoral course on homotopy theory and homotopy type theory
@@ -1203,6 +1884,11 @@ Bauer, A. (2019).
     and are on \href{https://www.youtube.com/playlist?list=PL-47DDuiZOMCRDiXDZ1fI0TFLQgQqOdDa}{YouTube}.
 \newblock The course notes for those lectures are on
     \href{https://github.com/andrejbauer/homotopy-type-theory-course}{GitHub}.
+
+\bibitem[Beattie and Butzmann(2002)]{beattie-butzmann}
+Beattie, R., and Butzmann, H.-P. (2002).
+\newblock \emph{Convergence Structures and Applications to Functional Analysis}.
+\newblock Kluwer Academic Publishers, Dordrecht, The Netherlands.
 
 \bibitem[Birkhoff and Mac Lane(1941)]{birkhoff-maclane}
 Birkhoff, G., and Mac Lane, S. (1941).
@@ -1221,10 +1907,49 @@ Eilenberg, S., and Mac Lane, S. (1945).
     \textbf{58}, 231--294.
 \newblock \doi{10.1090/S0002-9947-1945-0013131-6}.
 
+\bibitem[Halmos(1974)]{halmos}
+Halmos, P.~R. (1974).
+\newblock \emph{Naive Set Theory}.
+\newblock Springer-Verlag, New York.
+\newblock Originally published by Litton Educational Publishing, Inc. (1960).
+
+\bibitem[Hofmann and Streicher(1998)]{hofmann-streicher}
+Hofmann, M., and Streicher, T. (1998).
+\newblock The groupoid interpretation of type theory.
+\newblock In G. Sambin and J.~M. Smith, (eds.),
+    \emph{Twenty-five years of constructive type theory (Venice, 1995)}.
+\newblock Oxford Logic Guides, \textbf{36}, 83--111.
+\newblock Oxford University Press, New York.
+\newblock \doi{10.1093/oso/9780198501275.003.0008}.
+
+\bibitem[Jech(2003)]{jech}
+Jech, T. (2003).
+\newblock \emph{Set Theory}, third millenium edition, revised and expanded.
+\newblock Springer-Verlag, Berlin.
+
+\bibitem[Johnstone(1983)]{johnstone}
+Johnstone, P.~T. (1983).
+\newblock The point of pointless topology.
+\newblock \emph{Bulletin of the American Mathematical Society},
+    \textbf{8}, 41--53.
+\newblock \doi{10.1090/S0273-0979-1983-15080-2}.
+
 \bibitem[Kleiner(2007)]{kleiner}
 Kleiner, I. (2007).
 \newblock \emph{A History of Abstract Algebra}.
 \newblock Boston: Birkh\"{a}user.
+
+\bibitem[Ladyman and Presnell(2015)]{ladyman-presnell}
+Ladyman, J., and Presnell, S. (2015).
+\newblock Identity in homotopy type theory, Part I: The justification of
+    path induction.
+\newblock{Philosophia Mathematica}, \textbf{23}, 386--406.
+\newblock \doi{10.1093/philmat/nkv014}.
+
+\bibitem[Lang, 1993]{lang}
+Lang, S. (1993).
+\newblock \emph{Real and Functional Analysis}, third edition.
+\newblock Springer-Verlag, New York.
 
 \bibitem[Lawvere(1963)]{lawvere-thesis}
 Lawvere, F. W. (1963).
@@ -1302,6 +2027,11 @@ Voevodsky, V. (2015).
 \newblock \emph{Mathematical Structures in Computer Science}, \textbf{25},
     1278--1294.
 \newblock \doi{10.1017/S0960129514000577}.
+
+\bibitem[Wilson(2009)]{wilson}
+Wilson, R. A. (2009).
+\newblock \emph{The Finite Simple Groups}.
+\newblock Springer-Verlag, London.
 
 \end{thebibliography}
 
