@@ -1781,78 +1781,10 @@ It has nontrivial homotopy groups of all orders
 \citepalias[Table~1]{hott-book}.
 And, of course, this means it has nonreflexive identities (paths) of all
 orders.  So where do they come from if there are no constructors for them?
-This involves what seems to be a digression, but isn't (following section).
 
-\subsection{Path Lifting}
-\label{sec:lifting}
-
-Here we want to reconsider dependent sum types $\sum_{x : A} B(x)$.
-We have already seen that propositions-as-types says we read this as
-logical exists (when each $B(x)$ is a mere proposition).
-And we have already seen that sets-as-types says we read this as
-subset (when each $B(x)$ is a mere set).
-Table~\ref{tab:foo} says that in general, we are supposed to read this
-as ``total space.''  So what is that?
-
-In algebraic topology, if we have a morphism $f : X \to Y$, where morphism
-means \emph{continuous function} in the category of topological spaces,
-and if $f$ is \emph{surjective}, which means for every $y : Y$ there exists
-$x : X$ such that $y = f(x)$, then we can think of this in two ways.
-
-The first way is the obvious one, this is just like any other function.
-The continuity part is, for example, $x_n \to x$ implies $f(x_n) \to f(x)$.
-
-The second way is the backwards one.  Define for $y : Y$,
-the \emph{fiber} of $f$ over $y$ to be
-$$
-   f^{-1}(y) = \set{ x : X : y = f(x) }
-$$
-This notation $f^{-1}$ conflicts with the other defined
-in Section~\ref{sec:iso} above.  Sometimes I say that
-the Section~\ref{sec:iso} concept is the point-to-point inverse,
-which exists if and only if the function is an isomorphism,
-and this concept is the point-to-set inverse
-(or point-to-fiber inverse), which exists for
-any function.\footnote{There is a also a set-to-set inverse
-$$
-   f^{-1}(B) = \set{ x \in X : f(x) \in B }
-$$
-where $B \subset Y$, which we can translate into HoTT as
-$$
-   f^{-1}\left(\prod_{y : Y} B(y)\right) :\equiv
-   \prod_{x : X} B\bigl(f(x)\bigr)
-$$
-where $B : Y \to \universe$.
-\label{foot:set-to-set}
-}
-But real mathematicians happily deal with the ambiguity of notation
-(although occasionally apologizing for ``abuse of notation'') and don't
-say any such thing about the notation.
-
-Now the surjectivity of $f$ says every fiber $f^{-1}(y)$ is inhabited,
-and the continuity of $f$ says the fibers are pasted together continuously
-to make $X$.\footnote{More precisely, the definition of continuous function
-in general topology (also called point set topology) is $f^{-1}(B)$ is an
-open subset of $X$ whenever $B$ is an open subset of $Y$, where $f^{-1}$
-is the set-to-set inverse of footnote~\ref{foot:set-to-set}.}
-
-Now for the HoTT stuff.  Table~\ref{tab:foo} also says the homotopy
-interpretation of a general dependent type family $B : A \to \universe$
-is a ``fibration.''  And that means analogous to what this section is
-calling the backwards view of a continuous function as
-a map $y \mapsto f^{-1}(y)$.  So we have a space (type) $Y$, and a total
-space $X \equiv \prod_{y : Y} B(y)$ where $B(y)$ is now interpreted as the
-fiber over $y : Y$ and the fibers are pasted together continuously to make $X$,
-although in HoTT the ``continuously'' is a mere analogy --- synthetic rather
-than analytic --- it doesn't mean anything other than what
-the rules of HoTT for the types involved make it mean.
-
-So now we are ready for Lemma~2.3.1 {in} \citetalias{hott-book}.
-For any function (dependent type family) $F : A \to B$,
-any $x, y : A$ and any $p : x =_A y$, there is a function
-$$
-   p_{\textstyle *} : F(x) \to F(y)
-$$
+And, on the same theme, we can ask the opposite question about $S^1$.
+Why does $S^1$ have only one nontrival homotopy group?  Neither question
+has an obvious answer, but \citet{hott-book}
 
 \begin{thebibliography}{}
 
