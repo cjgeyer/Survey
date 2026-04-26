@@ -1370,10 +1370,10 @@ Now we can also clarify the difference between the so-called HoTT axiom
 of choice mentioned above and the classical axiom of choice.  The latter is
 \citepalias[Lemma~3.8.2]{hott-book}, if $A$ is a set and $B(x)$ is a set
 for all $x : A$, then
-$$
+\begin{equation} \label{eq:set-theoretic-axiom-of-choice}
    \left( \prod_{x : A} \bigproptrunc{B(x)} \right) \to 
    \bigproptrunc{\prod_{x : A} B(x)}
-$$
+\end{equation}
 is read just like the classical axiom of choice: if each $B(x)$
 is inhabited, then so is $\prod_{x : A} B(x)$.
 But we repeat that without the propositional truncation this is just true
@@ -1543,10 +1543,10 @@ is incompatible with the univalence axiom
 \citepalias[Theorem~3.2.2]{hott-book}.  So we cannot have that.
 
 But we can consistently assume \citepalias[Section~3.4]{hott-book}
-$$
+\begin{equation} \label{eq:propositional-lem}
    \prod_{A : \universe} \Bigl(\isProp(A) \to \bigl(A + (A \to 0)\bigr)
    \Bigr)
-$$
+\end{equation}
 However, we do not routinely assume this (sometimes denoted $\text{LEM}_{-1}$)
 because it makes our theorems not applicable to large parts of contemporary
 mathematics.
@@ -1587,6 +1587,7 @@ proves the function extensionality property because it just defines
 functions to be extensional relations.
 
 \subsection{Homotopy Levels}
+\label{sec:homotopy-levels}
 
 There is a pattern in the definitions of (mere) propositions
 and (mere) sets in HoTT.
@@ -2145,6 +2146,82 @@ The notes for Chapters~6 and~11 {in} \citet{hott-book} say the theories
 of higher inductive types and inductive-inductive types were not fully
 worked out at the time that book was written and (AFAIK) not now either,
 although work is ongoing.  They do provide good illustrative examples.
+
+\section{The Smorgasbord}
+
+We want to emphasize that in HoTT you pick and choose what you want.
+
+\begin{itemize}
+\item If you want LEM, you can assume that, \eqref{eq:propositional-lem} above.
+\item If you want the axiom of choice, you can assume that,
+    \eqref{eq:set-theoretic-axiom-of-choice} above.
+\item If you want the countable axiom of choice, you can assume that,
+    \eqref{eq:set-theoretic-axiom-of-choice} above with $A$ replaced by $\nats$.
+\item If you want to assume every type is a mere set, also called UIP or
+    Axiom K (Section~\ref{sec:homotopy-levels} above), you can assume that.
+\item Conversely, if you want to assume that not every type is a mere set,
+    then you assume the univalence axiom.
+\end{itemize}
+
+\citet[about 6 minutes into the 4th lecture]{bauer-hott} goes into a long
+aside about ``structure versus property'' sometimes there is structure that
+you don't want.  How do we get rid of it in HoTT?  His example is group
+theory.  Groups are tuples $(G, m, i, e)$ where $G$ is the carrier of the
+group (the set if you like), $m$ is the binary operation (multiplication or
+addition, $i$ is the inverse operation, and $e$ is the identity element.
+The way we write tuples in HoTT is iterated dependent pairs, so
+\begin{equation*}
+   \text{Group} :\equiv
+   \sum_{G : \universe}
+   \sum_{m : G \to G \to G}
+   \sum_{i : G \to G}
+   \sum_{e : G}
+   \text{isGroup}(G, m, i, e)
+\end{equation*}
+And then one might try to define
+\begin{multline*}
+   \text{isGroup}(G, m, i, e) :\equiv
+   \left( \prod_{x, y, z : G} m(m(x, y), z) = m(x, m(y, z)) \right)
+   \\
+   \times
+   \left( \prod_{x : G} \bigl( m(x, i(x)) = e \bigr)
+   + \bigl( m(i(x), x) = e \bigr) \right)
+   \\
+   \times
+   \left( \prod_{x : G} \bigl( m(x, e) = x \bigr)
+   + \bigl( m(e, x) = x \bigr) \right)
+\end{multline*}
+(the first big parens is the associative law, the second the
+existence and properties of inverses, the third the
+existence and properties of identities).
+But this is wrong (\citealp{bauer-hott} and \citet[Remark~6.11.2]{hott-book}).
+First, it is a constructive or intuitionistic group because we have not
+assumed LEM or the axiom of choice, but we won't worry about that.
+Second, it is not a group as studied in group theory because it has (or at
+least we have not ruled out) paths between paths, paths between paths between
+paths, and so forth.  This $G$ is an $\infty$-group.
+If we want a group, we need
+\begin{multline*}
+   \text{isGroup}(G, m, i, e) :\equiv
+   \isSet(G)
+   \times
+   \left( \prod_{x, y, z : G} m(m(x, y), z) = m(x, m(y, z)) \right)
+   \\
+   \times
+   \left( \prod_{x : G} \bigl( m(x, i(x)) = e \bigr)
+   + \bigl( m(i(x), x) = e \bigr) \right)
+   \\
+   \times
+   \left( \prod_{x : G} \bigl( m(x, e) = x \bigr)
+   + \bigl( m(e, x) = x \bigr) \right)
+\end{multline*}
+The $\isSet(G)$ imposes the UIP property on this type.
+We saw a similar move in the construction of the Cauchy reals, where
+the last axiom for $\sim$ imposes the UIP property on $\sim_\varepsilon$.
+
+So HoTT does not make classically trained mathematicians do anything they
+don't want to.  It just makes them be explict about it.
+It makes a lot fewer default assumptions than they are used to.
 
 \section{Set Theory as Spaghetti Code}
 
