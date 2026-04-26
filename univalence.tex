@@ -1,0 +1,204 @@
+
+\documentclass[11pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{indentfirst}
+
+\newcommand{\universe}{\mathcal{U}}
+\newcommand{\fatdot}{\,\cdot\,}
+
+\begin{document}
+
+\title{What Does Univalence Actually Do?}
+
+\author{Charles J. Geyer}
+
+\maketitle
+
+\section{Introduction}
+
+We try to decode Section~2.10 of the HoTT book.
+This requires understanding most or all of Chapter~2 of the book.
+
+\section{Path Lifting}
+
+\subsection{By Non-Dependent Functions}
+
+Lemma~2.2.1 of the HoTT book says, given $f : A \to B$ and $x, y : A$,
+there is a function
+\begin{equation} \label{eq:apply-function-to-path}
+   \text{ap}_f : (x =_A y) \to \bigl(f(x) =_B f(y)\bigr)
+\end{equation}
+This function can be read as application of $f$ to a path or as path lifting.
+If $p$ is a path from $x$ to $y$, then $\text{ap}_f(p)$ is a path from
+$f(x)$ to $f(y)$.
+
+It is a common ``abuse of notation'' to write $f(p)$ instead
+of $\text{ap}_f(p)$.  Usually no confusion arises.  This matches the
+use of the same letter for the maps of objects to objects and morphisms
+to morphisms for a category theoretic functor.
+But strictly speaking, it is an abuse: $f$ maps points to points, not
+paths to paths.
+
+In category theory it is not an abuse.  A functor is a morphism between
+categories.  It ``acts'' functionally on both parts of the categories,
+mapping objects to objects and morphisms to morphisms (and satisfies
+some laws).
+
+In HoTT it is an abuse, because we do not want to define thingummies
+analogous to categories in which the objects are point and the morphisms
+are paths.  And so functions cannot map between those non-existent thingummies.
+
+In classical homotopy theory, it is not an abuse.  If $p$ is defined to
+have type $I \to A$, where $I$ is the unit interval of the real line,
+then $\text{ap}_f(p) = f \circ p$.
+
+\subsection{By Dependent Functions}
+
+Lemma~2.3.1 of the HoTT book says, given $P : A \to \universe$ and $x, y : A$,
+and $p : (x =_A y)$, there is a function $p_{\textstyle *} : P(x) \to P(y)$.
+
+Back in Section~1.12 of the HoTT book (on identity types) this function
+was called \emph{indiscernability of identicals}
+(the reverse of Leibniz's principle,
+the principle that equals may be substituted for equals).
+
+The HoTT book calls this lemma the Transport Lemma.
+They also introduce the notation
+$$
+   \text{transport}^P(p) \equiv p_{\textstyle *}
+$$
+
+The HoTT book also explains a topological view of this.
+Think of the type family $P : A \to \universe$ as a fibration with
+base space $A$, so $P(x)$ is the fiber over $x : A$, hence
+$\sum_{x : A} P(x)$ is the \emph{total space} of the fibration with
+first projection
+$$
+   \text{pr}_1 : \sum_{x : A} P(x) \to A
+$$
+given by $(x, \text{foo}) \mapsto x$.
+Then, given a path $p : (x =_A y)$ and a point $u : P(x)$,
+there is a path in the total space from $u$ to $p_{\textstyle *}(u)$.
+
+This path is given explicitly by Lemma~2.3.2 {in} the HoTT book,
+which it calls the Path Lifting Lemma.
+Suppose $P : A \to \universe$ and $x : A$ and $u : P(x)$.
+Then for all $p : (x =_A y)$, we have
+\begin{subequations}
+\begin{equation} \label{eq:path-lifting}
+   \text{lift}(u, p) : (x, u) =_{\sum_{x : A} P(x)} (y, p_{\textstyle *}(u))
+\end{equation}
+satisfying
+\begin{equation} \label{eq:path-lifting-too}
+   \text{pr}_1(\text{lift}(u, p)) = p
+\end{equation}
+\end{subequations}
+And indeed, \eqref{eq:path-lifting} does say that $\text{lift}(u, p)$ is
+a path in the total space from $(x, u)$ to $(y, p_{\textstyle *}(u))$
+as advertised.  And \eqref{eq:path-lifting-too} says the path which is lifted
+(???) is $p$.
+
+What the HoTT book means by this is explained far below (but before the
+next lemma).  Given a dependent function $f : \prod_{x : A} B(x)$ they
+define a non-dependent function $f' : A \to \sum_{x : A} B(x)$ by
+defining $f'(x) = (x, f(x))$.
+Then they consider $f'(p)$, again abuse of notation because $p$ is not
+a term of type $A$, 
+
+\section{Homotopy}
+
+Definition~2.4.1 says if $f, g : \prod_{x : A} B(x)$ then
+a \emph{homotopy} from $f$ to $g$ is a dependent function of type
+\begin{equation} \label{eq:homotopy}
+   (f \sim g) :\equiv \prod_{x : A} \left(f(x) =_{B(x)} g(x)\right)
+\end{equation}
+The HoTT book (Section~2.4) notes that the type $(f \sim g)$ is different
+from the identity type $(f = g)$.  If the axiom of function extensionality
+(HoTT book, Section~2.9) is assumed (or the univalence axiom, which implies
+function extensionality), then the type $(f \sim g)$ and $(f = g)$ are
+homotopy equivalent.  But we had better not jump to that yet because
+homotopy equivalence is what we are trying to understand.
+
+\section{Revised Down to Here}
+
+The function
+$$
+   \text{idtoeqv} : (A =_\universe B) \to (A \simeq B)
+$$
+has argument $p : A =_\universe B$ a path in $\universe$ (not a function type)
+and value in $(A \simeq B)$ defined by (2.4.11) in the HoTT book, which says,
+$$
+   (A \simeq B) :\equiv \sum_{f : A \to B} \text{isequiv}(f)
+$$
+and $\text{isequiv}(f)$ is defined by (2.4.10) in the HoTT book
+$$
+   \text{isequiv}(f) :\equiv
+   \left( \sum_{g : B \to A} (f \circ g \sim \text{id}_B) \right)
+   \times
+   \left( \sum_{h : B \to A} (h \circ f \sim \text{id}_A) \right)
+$$
+where $\sim$ is defined by Definition~2.4.1 {in} the HoTT book
+$$
+   (f \sim g) :\equiv \prod_{x : A} \left(f(x) =_{P(x)} g(x)\right)
+$$
+where $f, g : \prod_{x : A} P(x)$.
+
+
+So this is all very complicated.  First $f \sim g$ is read as a
+\emph{homotopy} between $f$ and $g$.
+It says $f \sim g$ implies $f(x) = g(x)$ for all $x$ where $f$ and $g$
+are dependent functions of the same type.
+
+The HoTT book notes that $f \sim g$ is different from $f = g$ unless
+the axiom of function extensionality is assumed, in which case they
+are equivalent (but not definitionally equal).
+
+We can use this to translate $\text{isequiv}$ to
+\begin{multline*}
+   \text{isequiv}(f) \equiv
+   \left( \sum_{g : B \to A} \prod_{y : B} ((f \circ g)(y) =_B y) \right)
+   \\ 
+   \times
+   \left( \sum_{h : B \to A} \prod_{x : A} ((h \circ f)(x) =_A x) \right)
+\end{multline*}
+and this is a cartesian product, hence a pair, the first term of which is
+a $\Sigma$-type, hence a dependent pair $(g, p)$, where
+$g : B \to A$ and $p : y \mapsto ((f \circ g)(y) = y)$.
+That is, $g$ is a function and $p$ is a proof that $g$ is a right inverse
+of $f$, and such a proof is a function that maps $y : B$ to a path from
+$(f \circ g)(y)$ to $y$.  Hence
+$$
+   \text{isequiv}(f) \equiv \bigl( (g, p), (h, q) \bigr)
+$$
+where $g, h : B \to A$ and $p$ is a proof that $g$ is a right inverse of $f$
+and $q$ is a proof that $h$ is a left inverse of $f$.
+Thus $\text{isequiv}$ is a really complicated beast.
+
+Now $\text{idtoeqv}$ maps a path $r : (A = B)$ to a pair $(f, \text{foo})$
+where $f : A \to B$ and $\text{foo}$ is a proof that $f$ is an equivalence,
+that is $\text{foo} : \text{isequiv}(f)$.
+
+But we can say more than that.  Lemma~2.3.1 (transport) says
+for $P : A \to \universe$ and $p : (x =_A y)$ there is a function
+$p_{\textstyle *} : P(x) \to P(y)$.
+Sometimes (the HoTT book says) when we want to be fussy and indicate $P$
+we can write $p_*$ as
+$$
+   \text{transport}^P(p, \fatdot) : P(x) \to P(y)
+$$
+and from this we get Lemma~2.3.2 (path lifting), which says
+for $P : A \to \universe$ assume $x : A$ and $u : P(x)$ and $p : (x =_A y)$,
+then there is a function
+$$
+   \text{lift}(u, p) : (x, u) =_{\left(\sum_{x : A} P(x)\right)}
+   (y, p_{\textstyle *}(u))
+$$
+such that
+$$
+   \text{pr}_1(\text{lift}(u, p)) = p
+$$
+
+
+\end{document}

@@ -1,0 +1,80 @@
+
+\documentclass[11pt]{article}
+
+\usepackage{amsmath}
+
+\begin{document}
+
+\section{Algebraic Theories}
+
+In the Awodey-Bauer notes, the theory of groups is given by equations
+(pp. 10 and 14)
+\begin{subequations}
+\begin{align}
+   m(x, m(y, z)) & = m(m(x, y), z)
+   \label{law:associative}
+   \\
+   m(x, e()) & = x
+   \label{law:right-identity}
+   \\
+   m(e(), x) & = x
+   \label{law:left-identity}
+   \\
+   m(x, i(x)) & = e()
+   \label{law:right-inverse}
+   \\
+   m(i(x), x) & = e()
+   \label{law:left-inverse}
+\end{align}
+\end{subequations}
+where $m$ is a binary operation (the group operation, usually called
+multiplication or division, according to taste), $i$ is a unary operation
+(the inversion operation, $i(x)$ is the inverse of $x$), and $e$ is a nullary
+operation, also called a constant, ($e()$ is the identity element of the
+group).  There is no universe specified: all of variables range over the same
+set or type.  If we call that $G$, then
+\begin{align*}
+   m & : G \times G \to G
+   \\
+   i & : G \to G
+   \\
+   e & : 1 \to G
+\end{align*}
+but since there is only one type the axioms do not need to mention it.
+Also there is no quantification, at least not explicitly.  One can say
+there is an implicit for-all for each variable, but not explicit.
+
+The terms of the theory are the obvious.
+\begin{itemize}
+\item Each variable is a term.
+\item Each function evaluated at any terms is a term.
+\end{itemize}
+Then the axioms are the equations that given to hold between terms.
+The only rules for proof are variable renaming, terms for function evaluation,
+and substution of equals for equals.
+
+If we had fewer or more axioms (equations), then we would have different
+theories.  For example,
+\begin{itemize}
+\item The theory with one binary function $m$ and one equation
+    \eqref{law:associative} is the theory of \emph{semigroups}.
+\item The theory with one binary function $m$, one nullary function $e$,
+    and three equations \eqref{law:associative}, \eqref{law:right-identity},
+    and \eqref{law:left-identity} is the theory of \emph{monoids},
+    also called \emph{semigroups with identities}.
+\item The theory with the same functions and equations as the theory
+    of groups plus the additional equation
+\begin{equation} \label{law:commutative}
+    m(x, y) = m(y, x)
+\end{equation}
+    is the theory of \emph{commutative groups},
+    also called \emph{abelian groups}.
+\item The theory with the same functions and equations as the theory
+    of groups plus the additional equation
+\begin{equation} \label{law:boolean}
+    m(x, x) = e
+\end{equation}
+    is the theory of \emph{boolean groups}.
+\end{itemize}
+
+\end{document}

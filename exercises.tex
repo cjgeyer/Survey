@@ -1,0 +1,88 @@
+
+\documentclass[11pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+
+\newcommand{\universe}{\mathcal{U}}
+\newcommand{\nats}{\mathbb{N}}
+
+\begin{document}
+
+\noindent
+HoTT book: Exercise 1.11.  Prove for any type $A$ we
+have $\neg\neg\neg A \to \neg A$.  In HoTT $\neg A$ is defined to be
+$A \to 0$.  So the left-hand side is
+$$
+   ((A \to 0) \to 0) \to 0
+$$
+Assume this is true (inhabited),
+then an inhabitant is a function $f : ((A \to 0) \to 0) \to 0$.
+But the only function having codomain $0$ is $0 \to 0$.
+So we infer $0 \equiv (A \to 0) \to 0$.
+But that means $(A \to 0) \to 0$ is not inhabited, hence $A \to 0$ is inhabited.
+And that is $\neg A$.
+
+\medskip\noindent
+HoTT book: Exercise 1.15.  Prove that identity of indiscernables (IoI) follows
+from path induction.  IoI is: for every $C : A \to \universe$
+there is a function
+\begin{equation} \label{eq:f}
+   f : \prod_{x, y : A} \prod_{p : (x =_A y)} C(x) \to C(y)
+\end{equation}
+satisfying
+\begin{equation} \label{eq:f-too}
+   f(x, x, \text{refl}_x) = \text{id}_{C(x)}
+\end{equation}
+Proof: we do have $x$ and $y$ varying freely in \eqref{eq:f} so it is
+valid to use path induction, that is, we can only look at the case $y =_A x$
+and $p = \text{refl}_x$ in which case \eqref{eq:f}
+becomes $f(x, x, \text{refl}_x)$ is an inhabitant of $C(x) \to C(x)$,
+and we know that \eqref{eq:f-too} is one such.  QED
+
+\medskip\noindent
+HoTT book: Exercise 1.16.  Prove that addition in $\nats$ is commutative,
+where $\nats$ are defined in Section~1.9 of the HoTT book.  That section
+defines $\text{add} : \nats \to \nats \to \nats$ satisfying the definitional
+equalities
+\begin{subequations}
+\begin{align}
+   \text{add}(0, n) & \equiv n
+   \label{eq:add-base}
+   \\
+   \text{add}(\text{succ}(m), n) & \equiv \text{succ}(\text{add}(m, n))
+   \label{eq:add-induction}
+\end{align}
+\end{subequations}
+We prove by mathematical induction (the recursor for $\nats$).  In the
+base case we have $\text{add}(0, 0) \equiv 0$ by plugging
+into \eqref{eq:add-base}.  Then for the induction step we assume
+\begin{equation} \label{eq:commutivity-induction}
+   \text{add}(m, n) \equiv \text{add}(n, m)
+\end{equation}
+from which \eqref{eq:add-induction} gives
+$$
+   \text{add}(\text{succ}(m), n) \equiv \text{succ}(\text{add}(n, m))
+$$
+from which we conclude
+\begin{equation} \label{eq:add-induction-induction}
+   \prod_{m : \nats} \text{add}(m, n) \equiv \text{add}(n, m)
+\end{equation}
+So now we do another mathematical induction induction with base case
+$$
+   \prod_{m : \nats} \text{add}(m, 0) \equiv \text{add}(0, m)
+$$
+derived by plug-in and induction step where we assume
+\eqref{eq:add-induction-induction} and derive
+$$
+   \prod_{m : \nats} \text{add}(m, \text{succ}(n)) \equiv
+   \text{succ}(\text{add}(n, m))
+$$
+from which we conclude
+$$
+   \prod_{n : \nats}
+   \prod_{m : \nats} \text{add}(m, n) \equiv \text{add}(n, m)
+$$
+QED
+
+\end{document}

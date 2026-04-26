@@ -1,0 +1,40 @@
+
+\documentclass[11pt]{article}
+
+\usepackage{amsmath}
+
+\DeclareMathOperator{\pr}{pr}
+
+\begin{document}
+
+The Kuratoski coding of ordered pair into ZFC-like set theory is
+$$
+   (a, b) :\equiv \{ \{a\}, \{a, b\} \}
+$$
+where the unordered pair $\{a, b\}$ is guaranteed to exist by the
+pairing axiom, and the singleton set
+$$
+   \{a\} = \{a, a\}
+$$
+is guaranteed to exist by the pairing axiom and the extensionality axiom.
+
+Now we need functions (the projections) that get back the elements of
+the pair.
+
+\paragraph{First projection.}  If $P = (a, b)$, then $\bigcap P = \{a\}$,
+so $\bigcap \bigcap P = a$.  So that is the first projection
+$\pr_1 : (a, b) \mapsto a$ is given by
+$$
+   \pr_1(P) = \bigcap \bigcap P
+$$
+
+\paragraph{Second projection.}  If $P = (a, b)$,
+then $\bigcup P = \{a, b\}$,
+so $\bigcup P \setminus \bigcap P = \{b\}$.  So that is the second projection
+$\pr_2 : (a, b) \mapsto b$ is given by
+$$
+   \pr_2(P) = \bigcap \left( \bigcup P \setminus \bigcap P \right)
+$$
+
+\end{document}
+
