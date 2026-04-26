@@ -305,9 +305,8 @@ Another moral of the story is that isomorphism is not particularly interesting.
 If $f$ in the first isomorphism theorem is itself an isomorphism, then all
 four groups in diagram~\ref{diag:isomorphism} are isomorphic, and we haven't
 learned anything.  It is only when $f$ is a homomorphism that is not an
-isomorphism that we learn something (get a non-trivial factorization).
-When $G / \ker(f)$ is not isomorphic to $G$ or the trivial group,
-we have factored $G$.
+isomorphism and $G / \ker(f)$ is not isomorphic to $G$ or the trivial group
+that we learn something (get a non-trivial factorization).
 So we are interested in all the homomorphisms, not just the isomorphisms.
 
 \section{Constructive Analysis}
@@ -613,7 +612,7 @@ A \emph{permutation group} is exactly this construction when the object
 is a finite set and the morphisms are all iso (invertible functions
 from this finite set to itself).\footnote{An invertible function from
 a set of chairs to itself tells the occupants of the chairs where to
-go to permute themselves.}
+go to permute themselves.  If sitting in chair $x$, then move to chair $f(x)$.}
 An \emph{automorphism group} is exactly this construction when the object
 is any mathematical object whatsoever and the morphisms are isomorphisms
 in any sense that agrees with the definition in category theory:
@@ -1749,7 +1748,8 @@ The defining equations \eqref{eq:nats-induction-base} and
    \\
    c_s & : \prod_{n : \nats} \bigl( C(n) \to C(\successor(n)) \bigr)
 \end{align*}
-Then we have $\prod_{n : \nats} C(n)$, that is, the function $n \mapsto C(n)$
+Then we have $\prod_{n : \nats} C(n)$, that is, the function
+$\inductor_\nats(C, c_0, c_s) : n \mapsto C(n)$
 given by the induction principle.
 Reading the $\Pi$-types as logical for-all, we have classical mathematical
 induction.
@@ -2142,7 +2142,7 @@ by the definition of $\sim$).)
 With all of that, the definition is entirely constructive
 with no use of LEM or any choice axioms.
 
-The notes for Chapters~6 and~11 {in} \citet{hott-book} say the theories
+The notes for Chapters~6 and~11 {in} \citetalias{hott-book} say the theories
 of higher inductive types and inductive-inductive types were not fully
 worked out at the time that book was written and (AFAIK) not now either,
 although work is ongoing.  They do provide good illustrative examples.
@@ -2168,7 +2168,7 @@ aside about ``structure versus property'' sometimes there is structure that
 you don't want.  How do we get rid of it in HoTT?  His example is group
 theory.  Groups are tuples $(G, m, i, e)$ where $G$ is the carrier of the
 group (the set if you like), $m$ is the binary operation (multiplication or
-addition, $i$ is the inverse operation, and $e$ is the identity element.
+addition), $i$ is the inverse operation, and $e$ is the identity element.
 The way we write tuples in HoTT is iterated dependent pairs, so
 \begin{equation*}
    \text{Group} :\equiv
@@ -2194,7 +2194,8 @@ And then one might try to define
 (the first big parens is the associative law, the second the
 existence and properties of inverses, the third the
 existence and properties of identities).
-But this is wrong (\citealp{bauer-hott} and \citet[Remark~6.11.2]{hott-book}).
+But this is wrong (\citealp{bauer-hott}
+and \citetalias[Remark~6.11.2]{hott-book}).
 First, it is a constructive or intuitionistic group because we have not
 assumed LEM or the axiom of choice, but we won't worry about that.
 Second, it is not a group as studied in group theory because it has (or at
