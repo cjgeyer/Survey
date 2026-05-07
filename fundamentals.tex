@@ -53,18 +53,9 @@
 
 \begin{document}
 
-\title{On Generalizations of Equality, Logic, and Set Theory
-    in Mathematics of the Past Century}
+\title{Homotopy Type Theory Basics}
 \author{Charles J. Geyer}
 \maketitle
-
-\begin{quotation}
-In brief, a philosophy of Mathematics is not convincing unless it is
-founded on an examination of Mathematics itself.
-Wittgenstein (and other philosophers) have failed in this regard.
-\\
-\hspace*{\fill} --- \citet{maclane}
-\end{quotation}
 
 \section{License}
 
@@ -74,6 +65,178 @@ Attribution-ShareAlike 4.0 International License
 
 The \LaTeX\ source for this document is
 at \url{https://github.com/cjgeyer/Survey}.
+
+\section{Introduction}
+
+This document goes over some basic principles of homotopy type theory (HoTT).
+It follows \citet[hereinafter referred to as the HoTT book]{hott-book}.
+\defcitealias{hott-book}{the HoTT book}
+
+\subsection{Terms and Types}
+
+Terms (references to mathematical objects) have types.  This is symbolized
+$a : A$, read $a$ is a term of type $A$.
+Every term has exactly one type.  It makes no sense for a term to
+be untyped or to have more than one type.  We say the mathematics or computer
+program \emph{type checks} if we can verify that each term has its asserted
+type.
+
+Unlike logic plus set theory
+
+Types are defined
+\emph{intensionally} by rules for constructing and using terms of the type.
+
+There are alternative readings of $a : A$
+\begin{itemize}
+\item $a$ is a proof of the proposition $A$,
+\item $a$ is an element of the set $A$, and
+\item $a$ is a point in the space $A$.
+\end{itemize}
+
+The first alternative reading is called \emph{propositions as types}.
+This interpretation says $A$ is true if it is inhabited and false otherwise.
+Thus $a : A$ says that $A$ is true.  It proves $A$ is true.
+
+The first alternative reading is called \emph{propositions as types}.
+\REVISED
+We can instead read $a : A$ as $a$ is an element of the set $A$.
+But types are not sets like in ZFC (Zermelo–Fraenkel set theory with
+the axiom of choice) or similar set theories. 
+
+ZFC-like sets are defined \emph{extensionally:} they are nothing but
+a collection of somethings.  In type theory, terms and types are different
+kinds of things.  In ZCF-like set theory, elements and sets are the same
+kind of thing: elements of sets are themselves sets.  In type theory,
+every term has exactly one type.  In ZFC-like set theory, elements can
+belong to more than one set.  So this reading can be misleading and we
+have to keep the differences in mind.
+
+We can say instead $a$ is a point in a space $A$.  This says $A$ has structure
+over and above being a mere set.  It does not behave as just a collection.
+
+We can say instead $a$ is a proof of the proposition $A$.
+Martin-L\"{o}f type theory (MLTT) \citep{martin-lof-mltt}
+and HoTT have the notion of
+\emph{propositions as types}.  A type considered as a proposition is true
+if inhabited and false if uninhabited.  Thus an inhabitant proves
+the proposition, that is, $a : A$ is a proof of $A$.
+There is no difference between proving a proposition and constructing a
+term of the type.
+
+But there is only one concept type, not three concepts (proposition, set,
+space).  We may consider this concept in different ways depending on what
+we are doing, but there is no difference.
+
+\subsection{Operations on Types}
+
+We can combine types and terms via various operations
+(Table~\ref{tab:operations}).
+\begin{table}
+\begin{center}
+\begin{tabular}{ll}
+$A \to B$ & function type \\
+$A \times B$ & product type \\
+$A + B$ & sum or coproduct type \\
+$\prod_{x : A} B(x)$ & dependent function type \\
+$\sum_{x : A} B(x)$ & dependent pair or sum type \\
+$x =_A y$ & identity type
+\end{tabular}
+\end{center}
+\caption{Operations on Types (Capital Letters) and Terms (Lower Case Letters).}
+\label{tab:operations}
+\end{table}
+
+Most of these are familiar to mathematicians.  A term of type $A \to B$
+is a function $f : A \to B$ that maps $x : A$ to $f(x) : B$.  The rules
+for the type say how to construct $f(x)$ from $x$.
+
+A term of type $A \times B$ (the Cartesian product of $A$ and $B$) is an
+ordered pair $(a, b)$, where $a : A$ and $b : B$.
+
+Type $A + B$ is less familiar.  It can be thought of as the disjoint
+union in set theory.  Formally, a term of type $A + B$ has the form
+$\text{inl(a)}$ for some $a : A$ or
+$\text{inr(b)}$ for some $b : B$, that is, either a term of type $A$ or a
+term of type $B$ together with the memory of which.
+
+A term of type $\prod_{x : A} B(x)$ (the Cartesian product of arbitrary family)
+is again familiar.  It is a function $f : \prod_{x : A} B(x)$ that maps $x : A$
+to $f(x) : B(x)$.  The only difference with an ordinary function is that
+the codomain $B(x)$ depends on the argument $x$.
+But this is just like the way a Cartesian product of an arbitrary family of
+sets is defined in ZFC-like set theory.
+
+A term of type $\sum_{x : A} B(x)$ is an ordered pair $(x, y)$ where $x : A$
+and $y : B(x)$.  So this is just like a term of type $A \times B$ except that
+the type of $y$ depends on $x$.
+
+\subsection{Propositions As Types}
+
+\emph{Propositions as types} is the view of types as propositions.
+A type considered as a proposition is true if inhabited and false
+if uninhabited.  A term $a : A$ is a proof that $A$ is true.
+So types are propositions and terms are proofs.
+All of the operations of type theory have reinterpretations in
+the propositions-as-types view
+\begin{table}
+\begin{center}
+\begin{tabular}{lll}
+operation & logical interpretation & logical notation \\
+\hline
+$0$ & empty type, falsity & $\bot$ \\
+$1$ & unit type, truth & $\top$ \\
+$A \to B$ & logical implication & $A \Rightarrow B$ \\
+$A \times B$ & logical and (conjunction) & $A \vee B$ \\
+$A + B$ & logical or (disjunction) & $A \wedge B$ \\
+$\prod_{x : A} B(x)$ & logical for all & $\forall_{x : A} B(x)$ \\
+$\sum_{x : A} B(x)$ & logical exists & $\exists_{x : A} B(x)$ \\
+$x =_A y$ & logical equality & $x = y$ \\
+$A \to 0$ & logical negation & $\neg A$
+\end{tabular}
+\end{center}
+\caption{Propositions as Types.}
+\label{tab:propositions-as-types}
+\end{table}
+
+\subsection{The Empty Type}
+
+We start with the empty type $0$.  This type is very different from the
+rest.  It has no constructors that say how to make terms of the type.
+We can think of it as the type having no terms, but to formalize that we
+need elimination rules \citepalias[Section~1.7]{hott-book}.
+The recursor for the empty type says for any type $A$ there is a function
+$0 \to A$.
+
+This is getting a bit ahead of ourselves because we have not defined function
+types yet.  But we can say that HoTT functions are just like the rest of math
+in that for $f : A \to B$ we have $f(x) : B$ for each $x : A$.
+
+The inhabitant of $0 \to A$ is the empty function that has a vacuous rule.
+We do have $f(x) : A$ for all $x : 0$ but there are no such $x$.
+
+In the propositions-as-types view we interpret 0 as falsity.  And we
+interpret $0 \to A$ as the logical principle \emph{ex falso quodlibet}.
+
+\begin{thebibliography}{}
+
+\bibitem[Martin-L\"{o}f(1975)]{martin-lof-mltt}
+Martin-L\"{o}f, P. (1975).
+\newblock An intuitionistic theory of types: predicative part.
+\newblock In: H. E. Rose, J. C. Shepherdson (eds.),
+    \emph{Logic Colloquium ‘73, Proceedings of the Logic Colloquium,
+    Studies in Logic and the Foundations of Mathematics}, \textbf{80}, 73--118.
+\newblock Elsevier.
+\newblock \doi{10.1016/S0049-237X(08)71945-1}.
+
+\bibitem[The Univalent Foundations Program(2013)]{hott-book}
+The Univalent Foundations Program (2013).
+\newblock Homotopy Type Theory: Univalent Foundations of Mathematics.
+\newblock Institute for Advanced Study, Princeton, NJ.
+\newblock \url{https://homotopytypetheory.org/book}.
+
+\end{thebibliography}
+
+\end{document}
 
 \section{Introduction}
 
@@ -110,9 +273,6 @@ Special attention is paid to several themes.
     lambda-calculi, and even classical logic.  We are not interested
     in worshiping one true logic.
 \item Type theory replaces logic and set theory.  It does not need them.
-\item Functions and, more generally, morphisms of categories are far
-    more important than any other concept in mathematics.
-    They are fundamental, not part-whole relations.
 \end{itemize}
 
 \section{Up to Isomorphism}
@@ -662,15 +822,14 @@ $F(\idfun_B) \circ F(f) = F(f)$.  This proves $F(\idfun_A)$ is an
 identity morphism for object $F(A)$ and similarly with $A$ replaced by $B$.
 This uses uniqueness of identities
 (footnote~\ref{foot:identity}).\label{foot:functor-identity}}
-\begin{equation} \label{eq:functorality-identity}
+$$
    F(\idfun_A) = \idfun_{F(A)}
-\end{equation}
+$$
 and inverses (when they exist) to inverses\footnote{In
 diagram~\eqref{diag:functor} suppose $f$ and $g$ are inverse functions.
 then $A = C$ and $F(A) = F(C)$ so $F(f)$ and $F(g)$ are also inverse functions
 (because the composite arrow is an identity).
-This uses functorality of identities \eqref{eq:functorality-identity}
-and uniqueness of inverses
+This uses uniqueness of inverses
 (footnote~\ref{foot:inverse}).\label{foot:functor-inverse}}
 $$
    F(f^{-1}) = F(f)^{-1}
@@ -718,7 +877,7 @@ to $f_1$ as $t$ goes from 0 to 1.
 
 But this particular construction is irrelevant.  The actual concept is
 continuous deformation.  When there is a homotopy like the one above we
-say that $f_0$ and $f_1$ are \emph{homotopic} or \emph{homotopy equivalent}.
+say that $f_0$ and $f_1$ are \emph{homotopic} or \emph{homotopy equivalent}
 
 This leads to the definition of \emph{homotopy category} in which the
 objects are topological spaces and the morphisms are equivalence classes
@@ -1439,8 +1598,7 @@ and~Section~4.1]{hott-book} defines for $f : A \to B$
 to be the type whose terms are \emph{quasi-inverses}.  The ``quasi''
 is there to remind us that we have only homotopy rather than equality.
 (If we replace the homotopies by equalities, then we get the usual
-notion of isomorphism.  Or, if we work in homotopy category, this
-is the notion of isomorphism for that category.)
+notion of isomorphism.)
 
 Since a dependent sum type is an ordered pair and a product type is also
 a pair, a term of $\qinv(f)$ has the form $(g, (G, H))$
@@ -1448,7 +1606,8 @@ where $G : (f \circ g \sim \idfun_B)$
 and $H : (g \circ f \sim \idfun_A)$.
 So this is the usual proof-relevant logic:
 $g$ is a function and $(G, H)$, a pair of homotopies, is the proof
-that $g$ is a quasi-inverse of $f$.
+that $g$ is a quasi-inverse of $f$
+(in homotopy category).
 
 The trouble is, that (surprisingly) \eqref{eq:quasi-inverse-type}
 is not a mere proposition
@@ -1667,8 +1826,6 @@ $A \mapsto \proptrunc{A}_n$ that gives for any type $A$ its best approximation
 to Voevodsky and corresponds to the $n$-th Postnikov section in classical
 homotopy theory.  When applied to a type $A$ that is not a homotopy $n$-type
 for any $n$, this gives $\proptrunc{A}_n$ inhabiting homotopy level $n$.
-Propositional truncation (Section~\ref{sec:truncation} above) is the
-same as $\proptrunc{\fatdot}_0$.
 
 All of this requires univalence (or something like it).
 It is consistent with MLTT to assume that all types are sets
@@ -1782,7 +1939,7 @@ rather than extensional and analytic.  There is nothing in any of this
 about an intended model or any model or models.  Just constructions/proofs.
 
 Another way to say this is that the induction principle says that all you
-have to do to prove $\prod_{n : \nats} P(n)$ is to verify $P(0)$ and
+have to do to prove $P : \nats \to \universe$ is to verify $P(0)$ and
 and $P(n) \to P(\successor(n))$ for each $n : \nats$.
 There are no other cases to check.
 And how do we know that?  By the rules for type $\nats$.
@@ -2071,7 +2228,7 @@ One might wonder whether this makes math too hard to do.
 It was certainly thought so before \citet{bishop},
 but he showed a tremendous amount of real analysis, functional analysis,
 and measure theory could be done without LEM.  One just has to be a bit
-more careful, and this is the same care that is required for
+more careful, and this is exactly the same care that is required for
 accurate computations.
 
 \citet[Section~5.1]{bauer-constructive} discusses the intermediate value
@@ -2131,7 +2288,7 @@ the Cauchy number system $\real_c$ has constructors
     (such an $x$ is called a \emph{Cauchy approximation}),
     then there exists $\text{lim}(x) : \real_c$.
 \item \textbf{paths:} If $u, v : \real_c$
-    such that $\prod_{\varepsilon : \rats_+} (u \sim_\varepsilon v)$,
+    such that $\prod_{\varepsilon : \rats_+} (x \sim_\varepsilon y)$,
     then there exists a path of type $(u =_{\real_c} v)$.
 \end{itemize}
 and the relation $\sim$ has constructors, where in all constructors
@@ -2199,11 +2356,11 @@ And then one might try to define
    \\
    \times
    \left( \prod_{x : G} \bigl( m(x, i(x)) = e \bigr)
-   \times \bigl( m(i(x), x) = e \bigr) \right)
+   + \bigl( m(i(x), x) = e \bigr) \right)
    \\
    \times
    \left( \prod_{x : G} \bigl( m(x, e) = x \bigr)
-   \times \bigl( m(e, x) = x \bigr) \right)
+   + \bigl( m(e, x) = x \bigr) \right)
 \end{multline*}
 (the first big parens is the associative law, the second the
 existence and properties of inverses, the third the
@@ -2224,11 +2381,11 @@ If we want a group, we need
    \\
    \times
    \left( \prod_{x : G} \bigl( m(x, i(x)) = e \bigr)
-   \times \bigl( m(i(x), x) = e \bigr) \right)
+   + \bigl( m(i(x), x) = e \bigr) \right)
    \\
    \times
    \left( \prod_{x : G} \bigl( m(x, e) = x \bigr)
-   \times \bigl( m(e, x) = x \bigr) \right)
+   + \bigl( m(e, x) = x \bigr) \right)
 \end{multline*}
 The $\isSet(G)$ imposes the UIP property on this type.
 We saw a similar move in the construction of the Cauchy reals, where
@@ -2265,7 +2422,7 @@ high-level languages of the 1970's, such as Pascal, greatly restricted
 control flow.  A famous (or notorious, depending on point of view) paper
 \citep{go-to-harmful}
 argued that the go-to statement should never be used, only better behaved
-(and easier to reason about) structures like if-then-else and loops that
+(and easier to reason about structures) like if-then-else and loops that
 only have exit tests at the top or bottom (the difference is that if the
 test is at the top, the loop body may be executed zero times).
 The pejorative term that this paradigm had for previous practice was
@@ -2275,8 +2432,7 @@ Thirdly (or perhaps thirdly and fourthly), type systems were added to most
 computer languages.  This was a large part of both the ``object oriented''
 and ``functional programming'' paradigms.  Most modern statically compiled
 computer languages have relatively strong type systems.  Variables are
-not allowed to refer to anything at all
-but rather to objects of some specific type.
+not allowed to refer to anything but rather to objects of some specific type.
 This makes it possible for the compiler to catch many errors.  If a program
 does not type check, it is obviously wrong.
 
@@ -2601,11 +2757,6 @@ Leinster, T. (2014).
 \newblock \emph{American Mathematical Monthly}, \textbf{121}, 403--415.
 \newblock \doi{10.4169/amer.math.monthly.121.05.403}.
 
-\bibitem[Mac Lane(1986)]{maclane}
-Mac Lane, S. (1986).
-\newblock \emph{Mathematics Form and Function}.
-\newblock Springer-Verlag, New York.
-
 \bibitem[Martin-L\"{o}f(1975)]{martin-lof-mltt}
 Martin-L\"{o}f, P. (1975).
 \newblock An intuitionistic theory of types: predicative part.
@@ -2617,12 +2768,11 @@ Martin-L\"{o}f, P. (1975).
 
 \bibitem[Mazur(2008)]{mazur}
 Mazur, B. (2008).
-\newblock When is one thing equal to some other thing?
+\newblock When is one thing equal to some other thing.
 \newblock In \emph{Proof and Other Dilemmas: Mathematics and Philosophy},
 B. Gold and R.~A. Simons (eds.)
 \newblock Mathematical Association of America, Washington, DC.
 \newblock pp.~221--242.
-\newblock \doi{10.5948/UPO9781614445050.015}.
 
 \bibitem[Nelson(1987)]{nelson}
 Nelson, E. (1987).
@@ -2644,7 +2794,7 @@ Rijke, E. (2025).
 
 \bibitem[The Univalent Foundations Program(2013)]{hott-book}
 The Univalent Foundations Program (2013).
-\newblock \emph{Homotopy Type Theory: Univalent Foundations of Mathematics}.
+\newblock Homotopy Type Theory: Univalent Foundations of Mathematics.
 \newblock Institute for Advanced Study, Princeton, NJ.
 \newblock \url{https://homotopytypetheory.org/book}.
 
