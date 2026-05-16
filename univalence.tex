@@ -4,13 +4,26 @@
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{indentfirst}
+\usepackage{natbib}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\usepackage{url}
+\usepackage{doi}
 
 \newcommand{\universe}{\mathcal{U}}
 \newcommand{\fatdot}{\,\cdot\,}
 
+\DeclareMathOperator{\idfun}{id}
+\DeclareMathOperator{\refl}{refl}
+\DeclareMathOperator{\biinv}{biinv}
+\DeclareMathOperator{\qinv}{qinv}
+\DeclareMathOperator{\isequiv}{isequiv}
+
+\newcommand{\REVISED}{\begin{center} \LARGE REVISED DOWN TO HERE \end{center}}
+\newcommand{\MOVED}[1][equation]{\begin{center} [#1 moved] \end{center}}
+
 \begin{document}
 
-\title{What Does Univalence Actually Do?}
+\title{Univalence: What is it and What does it Do?}
 
 \author{Charles J. Geyer}
 
@@ -18,187 +31,276 @@
 
 \section{Introduction}
 
-We try to decode Section~2.10 of the HoTT book.
-This requires understanding most or all of Chapter~2 of the book.
+This document is about some gory details of 
+Voevodsky's univalence axiom for homotopy type theory (HoTT).
+We follow 
+\citep[hereinafter referred to as the HoTT book]{hott-book}
+\defcitealias{hott-book}{the HoTT book}
+and \citet{rijke}.
 
-\section{Path Lifting}
+\section{Identity Types}
 
-\subsection{By Non-Dependent Functions}
+For $x, y : A$ we have the identity type $(x =_A y)$ also written
+$\text{Id}_A(x, y)$.  The latter means we can think of $\text{Id}_A$
+as a function $A \to A \to \universe$.
 
-Lemma~2.2.1 of the HoTT book says, given $f : A \to B$ and $x, y : A$,
-there is a function
-\begin{equation} \label{eq:apply-function-to-path}
-   \text{ap}_f : (x =_A y) \to \bigl(f(x) =_B f(y)\bigr)
-\end{equation}
-This function can be read as application of $f$ to a path or as path lifting.
-If $p$ is a path from $x$ to $y$, then $\text{ap}_f(p)$ is a path from
-$f(x)$ to $f(y)$.
-
-It is a common ``abuse of notation'' to write $f(p)$ instead
-of $\text{ap}_f(p)$.  Usually no confusion arises.  This matches the
-use of the same letter for the maps of objects to objects and morphisms
-to morphisms for a category theoretic functor.
-But strictly speaking, it is an abuse: $f$ maps points to points, not
-paths to paths.
-
-In category theory it is not an abuse.  A functor is a morphism between
-categories.  It ``acts'' functionally on both parts of the categories,
-mapping objects to objects and morphisms to morphisms (and satisfies
-some laws).
-
-In HoTT it is an abuse, because we do not want to define thingummies
-analogous to categories in which the objects are point and the morphisms
-are paths.  And so functions cannot map between those non-existent thingummies.
-
-In classical homotopy theory, it is not an abuse.  If $p$ is defined to
-have type $I \to A$, where $I$ is the unit interval of the real line,
-then $\text{ap}_f(p) = f \circ p$.
-
-\subsection{By Dependent Functions}
-
-Lemma~2.3.1 of the HoTT book says, given $P : A \to \universe$ and $x, y : A$,
-and $p : (x =_A y)$, there is a function $p_{\textstyle *} : P(x) \to P(y)$.
-
-Back in Section~1.12 of the HoTT book (on identity types) this function
-was called \emph{indiscernability of identicals}
-(the reverse of Leibniz's principle,
-the principle that equals may be substituted for equals).
-
-The HoTT book calls this lemma the Transport Lemma.
-They also introduce the notation
-$$
-   \text{transport}^P(p) \equiv p_{\textstyle *}
-$$
-
-The HoTT book also explains a topological view of this.
-Think of the type family $P : A \to \universe$ as a fibration with
-base space $A$, so $P(x)$ is the fiber over $x : A$, hence
-$\sum_{x : A} P(x)$ is the \emph{total space} of the fibration with
-first projection
-$$
-   \text{pr}_1 : \sum_{x : A} P(x) \to A
-$$
-given by $(x, \text{foo}) \mapsto x$.
-Then, given a path $p : (x =_A y)$ and a point $u : P(x)$,
-there is a path in the total space from $u$ to $p_{\textstyle *}(u)$.
-
-This path is given explicitly by Lemma~2.3.2 {in} the HoTT book,
-which it calls the Path Lifting Lemma.
-Suppose $P : A \to \universe$ and $x : A$ and $u : P(x)$.
-Then for all $p : (x =_A y)$, we have
+Identity on a type $A$ is an equivalence relation (reflexive, symmetric,
+and transitive), that is, the types
 \begin{subequations}
-\begin{equation} \label{eq:path-lifting}
-   \text{lift}(u, p) : (x, u) =_{\sum_{x : A} P(x)} (y, p_{\textstyle *}(u))
-\end{equation}
-satisfying
-\begin{equation} \label{eq:path-lifting-too}
-   \text{pr}_1(\text{lift}(u, p)) = p
-\end{equation}
+\begin{gather}
+   (x =_A x)
+   \label{eq:path-reflexivity}
+   \\
+   (x =_A y) \to (y =_A x)
+   \label{eq:path-symmetry}
+   \\
+   (x =_A y) \to (y =_A z) \to (x =_A z)
+   \label{eq:path-transitivity}
+\end{gather}
 \end{subequations}
-And indeed, \eqref{eq:path-lifting} does say that $\text{lift}(u, p)$ is
-a path in the total space from $(x, u)$ to $(y, p_{\textstyle *}(u))$
-as advertised.  And \eqref{eq:path-lifting-too} says the path which is lifted
-(???) is $p$.
+are all inhabited
+\citepalias[definition of $\refl$ and Lemmas~2.1.1 and~2.1.2]{hott-book}.
+An inhabitant of \eqref{eq:path-reflexivity} is denoted $\refl_x$
+(there may be other inhabitants).
+An inhabitant of \eqref{eq:path-symmetry} is denoted $p \mapsto p^{-1}$.
+An inhabitant of \eqref{eq:path-transitivity}
+is denoted $(p, q) \mapsto p \cdot q$.
 
-What the HoTT book means by this is explained far below (but before the
-next lemma).  Given a dependent function $f : \prod_{x : A} B(x)$ they
-define a non-dependent function $f' : A \to \sum_{x : A} B(x)$ by
-defining $f'(x) = (x, f(x))$.
-Then they consider $f'(p)$, again abuse of notation because $p$ is not
-a term of type $A$, 
+If we think of $A$ as a category, terms of $A$ as objects of the category,
+and terms of $(x =A y)$ as morphisms from $x$ to $y$, then these morphisms
+satisfy the category axioms with $\refl_x$ being the identity morphism for
+object $x$ and each morphism being iso \citepalias[Lemma~2.1.4]{hott-book}.
+Thus this category is a groupoid.  Actually, this category is
+an $\infty$-groupoid, but this lemma does not assert that.
 
-\section{Homotopy}
+\subsection{Path Lifting}
 
-Definition~2.4.1 says if $f, g : \prod_{x : A} B(x)$ then
-a \emph{homotopy} from $f$ to $g$ is a dependent function of type
-\begin{equation} \label{eq:homotopy}
-   (f \sim g) :\equiv \prod_{x : A} \left(f(x) =_{B(x)} g(x)\right)
-\end{equation}
-The HoTT book (Section~2.4) notes that the type $(f \sim g)$ is different
-from the identity type $(f = g)$.  If the axiom of function extensionality
-(HoTT book, Section~2.9) is assumed (or the univalence axiom, which implies
-function extensionality), then the type $(f \sim g)$ and $(f = g)$ are
-homotopy equivalent.  But we had better not jump to that yet because
-homotopy equivalence is what we are trying to understand.
-
-\section{Revised Down to Here}
-
-The function
+For any function $f : A \to B$ there exists
 $$
-   \text{idtoeqv} : (A =_\universe B) \to (A \simeq B)
+   \text{ap}_f : (x =_A y) \to \bigl(f(x) =_B f(y)\bigr)
 $$
-has argument $p : A =_\universe B$ a path in $\universe$ (not a function type)
-and value in $(A \simeq B)$ defined by (2.4.11) in the HoTT book, which says,
-$$
-   (A \simeq B) :\equiv \sum_{f : A \to B} \text{isequiv}(f)
-$$
-and $\text{isequiv}(f)$ is defined by (2.4.10) in the HoTT book
-$$
-   \text{isequiv}(f) :\equiv
-   \left( \sum_{g : B \to A} (f \circ g \sim \text{id}_B) \right)
-   \times
-   \left( \sum_{h : B \to A} (h \circ f \sim \text{id}_A) \right)
-$$
-where $\sim$ is defined by Definition~2.4.1 {in} the HoTT book
-$$
-   (f \sim g) :\equiv \prod_{x : A} \left(f(x) =_{P(x)} g(x)\right)
-$$
-where $f, g : \prod_{x : A} P(x)$.
-
-
-So this is all very complicated.  First $f \sim g$ is read as a
-\emph{homotopy} between $f$ and $g$.
-It says $f \sim g$ implies $f(x) = g(x)$ for all $x$ where $f$ and $g$
-are dependent functions of the same type.
-
-The HoTT book notes that $f \sim g$ is different from $f = g$ unless
-the axiom of function extensionality is assumed, in which case they
-are equivalent (but not definitionally equal).
-
-We can use this to translate $\text{isequiv}$ to
-\begin{multline*}
-   \text{isequiv}(f) \equiv
-   \left( \sum_{g : B \to A} \prod_{y : B} ((f \circ g)(y) =_B y) \right)
-   \\ 
-   \times
-   \left( \sum_{h : B \to A} \prod_{x : A} ((h \circ f)(x) =_A x) \right)
-\end{multline*}
-and this is a cartesian product, hence a pair, the first term of which is
-a $\Sigma$-type, hence a dependent pair $(g, p)$, where
-$g : B \to A$ and $p : y \mapsto ((f \circ g)(y) = y)$.
-That is, $g$ is a function and $p$ is a proof that $g$ is a right inverse
-of $f$, and such a proof is a function that maps $y : B$ to a path from
-$(f \circ g)(y)$ to $y$.  Hence
-$$
-   \text{isequiv}(f) \equiv \bigl( (g, p), (h, q) \bigr)
-$$
-where $g, h : B \to A$ and $p$ is a proof that $g$ is a right inverse of $f$
-and $q$ is a proof that $h$ is a left inverse of $f$.
-Thus $\text{isequiv}$ is a really complicated beast.
-
-Now $\text{idtoeqv}$ maps a path $r : (A = B)$ to a pair $(f, \text{foo})$
-where $f : A \to B$ and $\text{foo}$ is a proof that $f$ is an equivalence,
-that is $\text{foo} : \text{isequiv}(f)$.
-
-But we can say more than that.  Lemma~2.3.1 (transport) says
-for $P : A \to \universe$ and $p : (x =_A y)$ there is a function
-$p_{\textstyle *} : P(x) \to P(y)$.
-Sometimes (the HoTT book says) when we want to be fussy and indicate $P$
-we can write $p_*$ as
-$$
-   \text{transport}^P(p, \fatdot) : P(x) \to P(y)
-$$
-and from this we get Lemma~2.3.2 (path lifting), which says
-for $P : A \to \universe$ assume $x : A$ and $u : P(x)$ and $p : (x =_A y)$,
-then there is a function
-$$
-   \text{lift}(u, p) : (x, u) =_{\left(\sum_{x : A} P(x)\right)}
-   (y, p_{\textstyle *}(u))
-$$
+which lifts a path $p$ in $A$ to a path $\text{ap}_f(p)$ in $B$
 such that
 $$
-   \text{pr}_1(\text{lift}(u, p)) = p
+   \text{ap}_f(\refl_x) = \refl_{f(x)}
+$$
+\citepalias[Lemma~2.2.1]{hott-book}.
+When no confusion will result, the HoTT book and others use the
+abuse of notation $f(p)$ rather $\text{ap}_f(p)$.
+This, strictly speaking, makes no sense because $p$ is not a point in the
+domain of $f$ nor even made out of points of the domain of $f$.
+But if we consider a path to be a subset of the type
+(as it would be classically)
+and let $f(p)$ denote the image of the subset $p$,
+which is a widely used mathematical notation, then this makes sense.
+
+If we continue thinking of $A$ and $B$ as categories with their paths as
+morphisms, then $f$ is the part of a functor between these categories
+that maps objects to objects and $\text{ap}_f$ is the part of the functor
+that maps morphisms to morphisms.  In order for this to hold we need
+$$
+   f(p \cdot q) = f(p) \cdot f(q)
+$$
+\citepalias[Lemma~2.2.2(i); this lemma also asserts other properties
+of path lifting]{hott-book}.
+
+There is also path lifting for dependent functions
+$$
+   f : \prod_{x : A} B(x)
+$$
+for which there exists for every path $p : (x =_A y)$ a function
+$$
+   p_{\textstyle *} : B(x) \to B(y)
+$$
+\citepalias[Lemma~2.3.1]{hott-book}.
+This function is so important that the HoTT book gives it two other
+notations
+$$
+   \text{transport}^B(p, \fatdot) \equiv p_{\textstyle *}(\fatdot)
+$$
+There are many other properties related to path lifting in
+Section~2.3 of \citet{hott-book}, but we will skip them for now.
+
+\section{Homotopies}
+
+Given two dependent functions of the same type
+$$
+   f, g : \prod_{x : A} B(x)
+$$
+a \emph{homotopy} between them is a dependent function of type
+$$
+   (f \sim g) :\equiv \prod_{x : A} \bigl(f(x) =_{B(x)} g(x)\bigr)
+$$
+(\citetalias[Definition~2.4.1]{hott-book};
+\citealp[Definition~9.1.2]{rijke}).
+
+A homotopy is (as the language above says) a dependent function
+with domain $A$.  Hence, if $H : (f \sim g)$,
+then $H(x) : \bigl(f(x) =_{B(x)} g(x)\bigr)$,
+that is, $H(x)$ is a path from $f(x)$ to $g(x)$.
+
+Homotopy is an equivalence relation, that is, if $f$, $g$, and $h$
+are dependent functions of the same type
+\begin{subequations}
+\begin{gather}
+   (f \sim f)
+   \label{eq:homotopy-reflexivity}
+   \\
+   (f \sim g) \to (g \sim f)
+   \label{eq:homotopy-symmetry}
+   \\
+   (f \sim g) \to (g \sim h) \to (f \sim h)
+   \label{eq:homotopy-transitivity}
+\end{gather}
+\end{subequations}
+\citepalias[Lemma~2.4.2]{hott-book}.
+
+Since \citet{hott-book} leaves the proof of this lemma to the reader,
+we do it.  For \eqref{eq:homotopy-reflexivity}, $x \mapsto \refl_{f(x)}$
+does the job.  For \eqref{eq:homotopy-symmetry}, given $H : (f \sim g)$
+we find $x \mapsto H(x)^{-1}$ does the job.
+For \eqref{eq:homotopy-transitivity}, given $H : (f \sim g)$ and
+$J : (g \to h)$ that $x \mapsto H(x) \cdot J(x)$ is in $(f \sim h)$.
+
+For $f, g : A \to B$ and $H : (f \sim g)$ and $p : x =_A y$ we have
+$$
+   H(x) \cdot g(p) = f(p) \cdot H(y)
+$$
+where $f(p)$ and $g(p)$ are, more pedantically,
+$\text{ap}_f(p)$ and $\text{ap}_g(p)$
+\citepalias[Lemma~2.4.2]{hott-book}.
+
+\section{Homotopy Equivalence}
+
+There are multiple different homotopy equivalent ways to define homotopy
+equivalence.  The point of the univalence axiom is that that they are
+all equally good.  Section~2.4 of \citetalias{hott-book} and Definition~9.2.1
+of \citet{rijke} define homotopy equivalence to be the property of a map
+being \emph{bi-invertible}, that is, for $f : A \to B$
+$$
+   \biinv(f) :\equiv
+   \left( \sum_{g : B \to A} (f \circ g \sim \idfun_B) \right)
+   \times
+   \left( \sum_{h : B \to A} (h \circ f \sim \idfun_A) \right)
+$$
+\citepalias[equation (2.4.10)]{hott-book}
+that is, up to homotopy, $f$ has a left inverse $h$ and a right inverse $g$.
+Later on (Section~4.5) \citetalias{hott-book} redefines homotopy equivalence
+to be another (homotopy equivalent) property.  It does not matter which
+homotopy equivalent property is used to define homotopy equivalence.
+Hence we take
+$$
+   \isequiv(f) := \biinv(f)
 $$
 
+A related definition is \emph{quasi-inverse:} for $f : A \to B$
+$$
+   \qinv(f) :\equiv \sum_{g : B \to A}
+   (f \circ g \sim \idfun_B) \times (g \circ f \sim \idfun_A)
+$$
+\citepalias[equation~(2.4.5)]{hott-book}.
+This, it turns out, is not a mere property
+\citepalias[Theorem~4.1.3]{hott-book} and also not satisfactory for
+defining the univalence axiom
+\citepalias[Exercise~4.6]{hott-book}.
+But it is useful for understanding homotopy equivalence.
+
+For $f : A \to B$
+\begin{subequations}
+\begin{gather}
+   \qinv(f) \to \isequiv(f)
+   \label{eq:qinv-to-isequiv}
+   \\
+   \isequiv(f) \to \qinv(f)
+   \label{eq:isequiv-to-qinv}
+   \\
+   \text{$\isequiv(f)$ is a mere proposition}
+   \label{eq:isequiv-proposition}
+\end{gather}
+\end{subequations}
+The first two of these say $\qinv(f)$ and $\isequiv(f)$ are logically
+equivalent in the sense of propositions-as-types and proof-relevant logic
+(since one is a mere proposition and the other not).
+
+Proofs of the first two are found in Section~2.4 of \citetalias{hott-book}.
+First we note that an inhabitant of $\qinv(f)$, where $f : A \to B$,
+is $(g, (G, H))$, where $g : B \to A$ and $G$ and $H$ are homotopies
+\begin{align*}
+   G & : (f \circ g \sim \idfun_B)
+   \\
+   H & : (g \circ f \sim \idfun_A)
+\end{align*}
+And an inhabitant of $\biinv(f)$, where $f : A \to B$,
+is $((g, G), (h, H))$, where $g, h : B \to A$ and $G$ and $H$ are homotopies
+\begin{align*}
+   G & : (f \circ g \sim \idfun_B)
+   \\
+   H & : (h \circ f \sim \idfun_A)
+\end{align*}
+We can also think of these as tuples: $(g, G, H)$ and $(g, G, h, H)$.
+
+An inhabitant of \eqref{eq:qinv-to-isequiv}
+is $(g, G, H) \mapsto (g, G, g, H)$ if $\qinv(f)$ is inhabited and
+$0 \to \isequiv(f)$ otherwise.
+An inhabitant of \eqref{eq:isequiv-to-qinv} is more complicated.
+Given $(g, G, h, H) : \isequiv(f)$ \citetalias{hott-book} defines
+$$
+   J(y) :\equiv H(g(y))^{-1} \cdot h(G(y))
+$$
+and declares $J$ is a homotopy.  What type is it?
+\begin{gather*}
+   G(y) : ((f \circ g)(y) = y)
+   \\
+   h(G(y)) : ((h \circ f \circ g)(y) = h(y))
+   \\
+   H(x) : (h \circ f)(x) = x)
+   \\
+   H(g(y)) : ((h \circ f \circ g)(y) = g(y))
+   \\
+   H(g(y))^{-1} : (g(y) = (h \circ f \circ g)(y))
+   \\
+   J(y) \equiv H(g(y))^{-1} \cdot h(G(y)) : (g(y) = h(y))
+\end{gather*}
+Thus $J : (g \sim h)$.
+
+Now define
+$$
+   K(x) :\equiv J(f(x)) \cdot H(x)
+$$
+\citetalias{hott-book} then claims $(g, G, K) : \qinv(f)$.  Check that.
+That $G$ proves $g$ is a right inverse of $f$ is true by assumption.
+So we have to show that $K$ proves $g$ is a left inverse of $f$.
+\begin{gather*}
+   J(f(x)) : ((g \circ f)(x) = (h \circ f)(x))
+   \\
+   K(x) \equiv J(f(x)) \cdot H(x) : ((g \circ f)(x) = x)
+\end{gather*}
+So indeed
+$$
+   K : (g \circ f \sim \idfun_A)
+$$
+(If it type checks, then it is a valid proof!)
+We still have to do the case where $\biinv(f)$ is not inhabited,
+but it is again trivial.
+
+
+\begin{thebibliography}{}
+
+\bibitem[Rijke(2025)]{rijke}
+Rijke, E. (2025).
+\newblock \emph{Introduction to Homotopy Type Theory}.
+\newblock Cambridge University Press.
+\newblock \doi{10.1017/9781108933568}.
+\newblock A preprint is available at
+    \href{https://arxiv.org/abs/2212.11082}{Ar$\chi$iv}.
+
+\bibitem[The Univalent Foundations Program(2013)]{hott-book}
+The Univalent Foundations Program (2013).
+\newblock \emph{Homotopy Type Theory: Univalent Foundations of Mathematics}.
+\newblock Institute for Advanced Study, Princeton, NJ.
+\newblock \url{https://homotopytypetheory.org/book}.
+
+\end{thebibliography}
 
 \end{document}
+
