@@ -5,6 +5,7 @@
 \usepackage{amsmath}
 \usepackage{amscd}
 \usepackage{amssymb}
+\usepackage{ifthen}
 \usepackage{indentfirst}
 \usepackage{natbib}
 \usepackage{rotating}
@@ -164,7 +165,8 @@ symbol $\circ$ read as composition of functions.\footnote{``Ranging over''
 is sloppy terminology.  We just have variables in formulas.  If there is only
 one sort of variable, we don't have to say what those variables refer to.
 We could do set theory without ever mentioning ``sets,'' although this
-goes against human languages.  When there are two sorts of variables,
+goes against the way human languages work.
+When there are two sorts of variables,
 we do have to keep them separate, but do not have to name them either.}
 We can (this is a matter of taste) also include non-logical constants
 $\idfun_A$ for every set $A$, which are identity functions.
@@ -180,11 +182,12 @@ below) and then, of course, each identity function can be associated with
 a set (object).  But in this functions-only view, there are no sets.  The
 only role of sets in ETCS or objects in categories (Section~\ref{sec:category}
 below) is to indicate which functions in ETCS or morphisms in categories
-are composable.\label{foot:arrows-only}}
+are composable.  \citet[p.~9]{maclane-working}
+gives details.\label{foot:arrows-only}}
 
-In short, in ZFC sets and set membership are the primary concepts,
+In short, in ZFC sets and set membership are the fundamental concepts,
 whereas in ETCS sets and
-functions and function composition are the primary concepts, and the
+functions and function composition are the fundamental concepts, and the
 set membership and subset relations must be defined in terms of them.
 
 To define membership \citep[Section~1]{leinster}
@@ -280,7 +283,8 @@ where $q$ is the quotient map $x \mapsto x$
 (with equality defined differently on the domain and codomain)
 where $\tilde{f}$ is the canonical isomorphism
 (the same as $f$ except with equality defined differently on the domain
-of $f$ and the domain of $\tilde{f}$),
+of $f$ and the domain of $\tilde{f}$ and with the codomains being as
+indicated in the diagram),
 and where $i$  is the canonical injection $x \mapsto x$.
 
 The theorem has zero interest in whether $f(G)$ and $H$ have some
@@ -507,7 +511,8 @@ for all $x$ in the domain of $f$, which is also the domain of $h$.
 But, in general, composition of morphisms only has to satisfy
 the laws; it does not need to be defined in terms of something else.}
 Some of these are shown in Table~\ref{tab:categories}
-(p.~\pageref{tab:categories}).
+\ifthenelse{\equal{\arabic{page}}{\pageref{tab:categories}}}
+{(this page)}{(p.~\pageref{tab:categories})}.
 \begin{table}
 \caption{Categories of Structured Sets and Structure-Preserving Functions}
 \begin{center}
@@ -920,7 +925,8 @@ A joke because it mystifies more than explains.  But monads are a big deal
 in functional programming.}
 
 As far as I know category theory has only filtered down to advanced
-undergraduate mathematics (courses mostly for math majors).  It is not
+undergraduate mathematics (courses mostly for math majors).\footnote{Nowadays,
+courses below this level are largely free of set theory too.}  It is not
 clear to me that the K-12 education establishment even wants to repeat
 the new math debacle with category theory.
 
@@ -967,10 +973,13 @@ over and above being a mere set),
 or we can say $A$ is a proposition (interpreted
 as true if it is inhabited and false otherwise) and $a$ is a proof of $A$.
 These readings are summarized in Table~\ref{tab:term-type}
+\ifthenelse{\equal{\arabic{page}}{\pageref{tab:term-type}}}
+{(this page)}{(p.~\pageref{tab:term-type})}.
 \begin{table}
 \begin{center}
 \begin{tabular}{ll}
 term & type \\
+\hline
 proof & proposition \\
 element & set \\
 point & space
@@ -1164,8 +1173,8 @@ In short, a type is a set when it is homotopically boring.  Points
 are either in the same path component or they aren't and the path
 components are uninteresting.
 
-This may not seem much like ZFC, but the analogy is actually very close.
-These HoTT sets behave much like ETCS sets \citepalias[Chapter~10]{hott-book}.
+This may not seem much like ZFC, but
+these HoTT sets behave much like ETCS sets \citepalias[Chapter~10]{hott-book}.
 But ETCS has the axiom of choice
 and HoTT doesn't (except if you add it as an extra assumption to prove
 something, Section~\ref{sec:truncation} below),
@@ -1217,7 +1226,9 @@ not needed for them.  It just generalizes them.
 
 So we copy Table~1 from \citetalias{hott-book} adding a bit from
 Table~1.1 in \citet{rijke} to get our Table~\ref{tab:foo}
-(p.~\pageref{tab:foo}), which shows how logic fits into type theory,
+\ifthenelse{\equal{\arabic{page}}{\pageref{tab:foo}}}
+{(this page)}{(p.~\pageref{tab:foo})},
+which shows how logic fits into type theory,
 the so-called Curry-Howard correspondence.
 \begin{sidewaystable}
 \begin{center}
@@ -1295,7 +1306,7 @@ of singleton sets is also guaranteed by the pairing axiom plus the axiom of
 extensionality because $\{a\} = \{a, a\}$.}
 
 Yet another thing we should perhaps clarify in the table is that in type theory
-a dependent function type $f : \prod_{x : A} B(x)$ is just a function such
+a dependent function $f : \prod_{x : A} B(x)$ is just a function such
 that $f(x) : B(x)$ so the codomain of the function depends on
 the argument $x$.
 
@@ -1822,8 +1833,8 @@ induction.
 Now what are we to make of this?  This is exactly the same as
 Peano's axioms for arithmetic\footnote{Actually, Peano needed two other
 axioms saying that $0_\nats \neq \successor(n)$ for any $n$
-and $n \neq \successor(n)$
-for any $n$.  But these are provable in HoTT
+and $\successor$ is an injective function.
+But these are provable in HoTT
 \citepalias[Section~2.13]{hott-book}, so we do not add them to the rules
 for type $\nats$.}
 except for here $C : \nats \to \universe$
@@ -2306,9 +2317,10 @@ It makes a lot fewer default assumptions than they are used to.
 
 \section{Set Theory as Spaghetti Code}
 
-When computers were just invented coding was an anything-goes affair.
+When computers were just invented, coding was an anything-goes affair.
 There were no computer languages, just op (operation) codes which when
-combined with addresses (numbers of memory locations) made machine-language
+combined with addresses (numbers indicating memory locations)
+made machine-language
 instructions.  But everything, instructions and data were just bits (zeros
 or ones).  What they represented (other than the op codes and memory addresses)
 was completely up to the programmer.  There was no distinction between
@@ -2424,8 +2436,8 @@ Moreover, Birkhoff's ergodic theorem is not provable either constructively
 \citep{bishop} nor in Nelson-style probability theory.}
 
 I have also been intrigued by synthetic mathematics.  I am old enough to
-have had a year of Euclidean geometry in high school.  Also we read long
-ago in FIG \citet{bell}, a book about synthetic differential geometry.
+have had a year of Euclidean geometry in high school.  Also long
+ago in FIG we read \citet{bell}, a book about synthetic differential geometry.
 
 I did have a PhD advisee that did a little bit of computer theorem proving.
 It turned out to be too time-consuming for us and the student switched
@@ -2684,6 +2696,11 @@ Leinster, T. (2014).
 \bibitem[Mac Lane(1986)]{maclane}
 Mac Lane, S. (1986).
 \newblock \emph{Mathematics Form and Function}.
+\newblock Springer-Verlag, New York.
+
+\bibitem[Mac Lane(1998)]{maclane-working}
+Mac Lane, S. (1998).
+\newblock \emph{Categories for the Working Mathematician}, second edition.
 \newblock Springer-Verlag, New York.
 
 \bibitem[Martin-L\"{o}f(1975)]{martin-lof-mltt}
