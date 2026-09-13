@@ -10,18 +10,33 @@
 \begin{document}
 
 \noindent
+HoTT book: Exercise 1.1.  Given functions $f : A \to B$ and $g : B \to C$
+define their composite $g \circ f : A \to C$ and show composition is
+associative.
+
+\medskip\noindent
+The definition is
+$$
+   (g \circ f)(x) = g(f(x)), \qquad x : A
+$$
+(that this type checks is obvious).  The proof of associativity is then
+that both $(h \circ g) \circ f$ and $h \circ (g \circ f)$ reduce to
+$$
+   (h \circ g \circ f)(x) = h(g(f(x))), \qquad x : A
+$$
+
+
+
+
+\noindent
 HoTT book: Exercise 1.11.  Prove for any type $A$ we
-have $\neg\neg\neg A \to \neg A$.  In HoTT $\neg A$ is defined to be
-$A \to 0$.  So the left-hand side is
+have $\neg\neg\neg A \to \neg A$.  Assume $a : A$.
+Then $A \to 0$ is not inhabited, so $(A \to 0) \to 0$ is inhabited, so
 $$
-   ((A \to 0) \to 0) \to 0
+   \neg\neg\neg A \equiv ((A \to 0) \to 0) \to 0
 $$
-Assume this is true (inhabited),
-then an inhabitant is a function $f : ((A \to 0) \to 0) \to 0$.
-But the only function having codomain $0$ is $0 \to 0$.
-So we infer $0 \equiv (A \to 0) \to 0$.
-But that means $(A \to 0) \to 0$ is not inhabited, hence $A \to 0$ is inhabited.
-And that is $\neg A$.
+is not inhabited.  Thus we have reached a contradiction (by assumption
+$\neg\neg\neg A$ is inhabited).  Hence $\neg A$.
 
 \medskip\noindent
 HoTT book: Exercise 1.15.  Prove that identity of indiscernables (IoI) follows
@@ -35,8 +50,8 @@ satisfying
    f(x, x, \text{refl}_x) = \text{id}_{C(x)}
 \end{equation}
 Proof: we do have $x$ and $y$ varying freely in \eqref{eq:f} so it is
-valid to use path induction, that is, we can only look at the case $y =_A x$
-and $p = \text{refl}_x$ in which case \eqref{eq:f}
+valid to use path induction, that is, we can only look at the case where
+$y$ is $x$ and $p$ is $\text{refl}_x$ in which case \eqref{eq:f}
 becomes $f(x, x, \text{refl}_x)$ is an inhabitant of $C(x) \to C(x)$,
 and we know that \eqref{eq:f-too} is one such.  QED
 

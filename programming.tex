@@ -1,0 +1,443 @@
+
+\documentclass[11pt]{article}
+
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amscd}
+\usepackage{amssymb}
+\usepackage[tableposition=top]{caption}
+\usepackage{ifthen}
+\usepackage{indentfirst}
+\usepackage{natbib}
+\usepackage{rotating}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\usepackage{url}
+\usepackage{doi}
+\usepackage{tikz-cd}
+
+\DeclareMathOperator{\idfun}{id}
+\DeclareMathOperator{\isContr}{isContr}
+\DeclareMathOperator{\isProp}{isProp}
+\DeclareMathOperator{\isSet}{isSet}
+\DeclareMathOperator{\dom}{dom}
+\DeclareMathOperator{\cod}{cod}
+\DeclareMathOperator{\qinv}{qinv}
+\DeclareMathOperator{\binv}{biinv}
+\DeclareMathOperator{\isEquiv}{isequiv}
+\DeclareMathOperator{\refl}{refl}
+\DeclareMathOperator{\inl}{inl}
+\DeclareMathOperator{\inr}{inr}
+\DeclareMathOperator{\successor}{succ}
+\DeclareMathOperator{\inductor}{ind}
+\DeclareMathOperator{\recursor}{rec}
+
+\newcommand{\sloop}{\text{loop}}
+\newcommand{\sbase}{\text{base}}
+\newcommand{\ssurf}{\text{surf}}
+
+\newcommand{\set}[1]{\{\,#1\,\}}
+\newcommand{\proptrunc}[1]{\lVert #1 \rVert}
+\newcommand{\termtrunc}[1]{\lvert #1 \rvert}
+\newcommand{\bigproptrunc}[1]{\left\lVert #1 \right\rVert}
+
+\newcommand{\ints}{\mathbb{Z}}
+\newcommand{\nats}{\mathbb{N}}
+\newcommand{\real}{\mathbb{R}}
+\newcommand{\universe}{\mathcal{U}}
+\newcommand{\rats}{\mathbb{Q}}
+
+\newcommand{\fatdot}{\,\cdot\,}
+
+\let\emptyset=\varnothing
+
+\newcommand{\REVISED}{\begin{center} \LARGE REVISED DOWN TO HERE \end{center}}
+\newcommand{\MOVED}[1][equation]{\begin{center} [#1 moved] \end{center}}
+
+\begin{document}
+
+\title{Programming in Homotopy Type Theory}
+\author{Charles J. Geyer}
+\maketitle
+
+\tableofcontents
+
+\section{License and Source Code}
+
+This work is licensed under a Creative Commons
+Attribution-ShareAlike 4.0 International License
+(\url{http://creativecommons.org/licenses/by-sa/4.0/}).
+
+The \LaTeX\ source for this document is
+at \url{https://github.com/cjgeyer/Survey}.
+
+\pagebreak[3]
+\section{Introduction}
+
+Homotopy type theory (HoTT) can be thought of as explained in
+\citet[hereinafter referred to as the HoTT book]{hott-book},
+\defcitealias{hott-book}{the HoTT book}
+a language for formalizing mathematics and hence a foundation for mathematics.
+But it can also be thought of as a functional programming language.
+
+A book presenting this point of view for Martin-L\"{o}f type theory (MLTT,
+\citealp{martin-lof-mltt}) is \citet*{programming-mltt} but that book does
+not seem to use exactly the same version of MLTT that HoTT uses.  Hence this
+document.
+
+In particular, the notion of type does not occur in \citet{programming-mltt}
+until Chapter~19 (137 pages in).  Before that it uses sets.  This is
+(apparently) very unlike HoTT.  So we will have to translate
+\citet{programming-mltt} into HoTT.
+
+We start with \citep[p.~1]{programming-mltt}
+\begin{quotation}
+In recent years several formalisms for program construction have been
+introduced. One such formalism is the type theory developed by
+Per Martin-L\"{o}f. It is well suited as a theory for program construction
+since it is possible to express
+both specifications and programs within the same formalism. Furthermore, the
+proof rules can be used to derive a correct program from a specification as
+well as to verify that a given program has a certain property.  This book
+contains an
+introduction to type theory as a theory for program construction.
+
+As a programming language, type theory is similar to typed functional
+languages such as Hope and ML [citations omitted], but a major difference
+is that the evaluation of a well-typed program always terminates.
+In type theory it is also possible
+to write specifications of programming tasks as well as to develop provably
+correct programs. Type theory is therefore more than a programming language and
+it should not be compared with programming languages, but with formalized
+programming logics such as LCF and PL/CV [citations omitted].
+\end{quotation}
+
+Section~1.1 of \citetalias{hott-book} gives multiple ways of talking about
+the fundamental judgement $a : A$ read neutrally as $a$ is a term of type $A$.
+Chapter~2 of \citet{programming-mltt} gives some others.
+These readings are summarized in Table~\ref{tab:ways}.
+\begin{table}
+\caption{Interpretations of $a : A$.  Alternative for term is token.
+  Alternatives for proof are witness, evidence, or certificate.}
+\label{tab:ways}
+\begin{center}
+\begin{tabular}{ll}
+term & type \\
+\hline
+proof & proposition \\
+element & set \\
+point & space \\
+program & specification \\
+solution & problem
+\end{tabular}
+\end{center}
+\end{table}
+
+When we think of HoTT as a language for formalizing mathematics, we are
+primarily interested in proofs.  In this reading, if $A$ is a type considered
+as a proposition, then proving that proposition is to show that $A$ is
+inhabited (there exists $a : A$).
+When we think of HoTT as a computer programming language, we are interested
+in running programs.  So this means computing (or constructing) a particular
+$a : A$, not just showing that such exists.
+
+Of course, one way to demonstrate $a : A$ is to actually construct $a$.
+So these are intertwined.  You cannot talk about one without the other.
+
+One important point of the quotation above is that HoTT (or MLTT) is not
+a Turing-complete computer language.  There is no halting problem.
+All well-typed programs halt.  Moreover, all well-typed programs are
+proved correct.  If it type checks, then it is correct.  Correctness is
+just $a : A$.   The program satisfies its specification.
+
+So one can think there are two languages: the computer programming language
+and the program specification language, but these are the same language, HoTT
+or MLTT, thought of in two different ways.
+
+As a programming language, HoTT or MLTT is a pure functional language.
+It does not have assignment or other side effects.  It does have functions
+as first-class objects, and it does have higher-order functions, those that
+have other functions as arguments or values.  Thus it contains higher-order
+logic.
+
+\section{Fundamentals}
+
+\subsection{Function Types}
+
+For any types $A$ and $B$, there is a function type $A \to B$.
+If this type is inhabited, the inhabitant $f : A \to B$ is a function
+and a program.  Given $x : A$ we can run the program to obtain $f(x) : B$.
+
+Note that this is unlike conventional Turing-complete computer languages.
+In MLTT or HoTT we cannot write a function that fails to terminate (does
+an infinite loop) or fails with an error in any other way.
+
+Note also that this is unlike functions in classical mathematics (using the
+law of excluded middle (LEM) or the axiom of choice (AC)).
+HoTT functions are given
+by a formula $f(x) = \Phi$, where $\Phi$ is a HoTT formula that may contain
+$x$ (if it does not contain $x$, then this is a constant function).
+In classical mathematics, LEM and AC assert the existence
+of functions for which there is no rule, hence no way the function can
+be evaluated.
+
+In order for a function definition to be valid, it must type-check.
+The user or a proof assistant much check that $f(x) : B$ whenever $x : A$.
+
+Evaluation of the function is just done by substitution.  To evaluate $f(y)$
+for some $y : A$, substitute $y$ for $x$ in $\Phi$ taking the usual care that
+$\Phi$ cannot contain $y$ as a bound variable.  (If $\Phi$ did contain $y$ as
+a bound variable, then such occurrences must be renamed before the
+substitution is done; \citetalias[Section~1.2]{hott-book}.  Of course,
+this is getting us a bit ahead of ourselves because we have not yet discussed
+the quantifiers $\prod$ and $\sum$ that bind variables.)
+
+A function may be anonymous, having no name (like $f$).  This is called
+$\lambda$-abstraction in computer science, and such functions are sometimes
+called lambdas rather than anonymous functions.  Mathematicians generally
+write such as $x \mapsto \Phi$.
+The computer science notation is $\lambda x. \Phi$.
+The $\lambda$ operator also binds variables (like $\prod$ and $\sum$ mentioned
+in the preceding paragraph).
+
+So now we have a real computer language that can calculate anything
+any other computer language can.  This is because functions are enough
+to express anything that can be computed (the Church-Turing thesis
+and Church's lambda calculus).  So in a sense, we do not need the rest
+of HoTT.  The other type formation rules are just for convenience.
+It is known that they could be defined in terms of functions only.
+(Appendix~A.1 of \citet{hott-book} does this.)
+
+One thing that should be pointed out is currying, how to make a function
+of multiple arguments.  All functions $A \to B$ have only one argument
+of type $A$.  But if $B$ is itself a function type, say $B \equiv C \to D$,
+then $f(x)$ is a function $C \to D$, which can be evaluated at $y : C$
+giving $f(x)(y) : D$.  And so on for even more arguments.
+The type of $f$ here is $A \to (C \to D)$.
+To simplify this further, $\to$ is understood as right-associative,
+so this can be written $A \to C \to D$.
+(This is the convention in functional programming languages
+in computer science and also in HoTT.)
+
+Currying is how we build functions of many arguments out of functions of
+single arguments.
+
+Usually no notational fuss is made about currying.
+If $f : A \to B \to C \to D$, then we should write $f(a)(b)(c)$ where
+$a : A$, $b : B$, and $c : C$ to obtain $f(a)(b)(c) : D$.  But we often
+consider this a function of three arguments and write $f(a, b, c)$ instead,
+like in conventional mathematics.
+
+\subsection{Dependent Function Types}
+
+For any type $A$, if $B(x)$ is a type for all $x : A$, then there is
+the dependent function type
+$$
+   \prod_{x : A} B(x)
+$$
+If $f$ is a term of this type, then $f$ is a function given by a formula
+$f(x) = \Phi$, and in order to type check, either we or a proof assistant
+must show that $f(x) : B(x)$ for $x : A$.
+If we have such a function, then
+given $x : A$ we can run the program to obtain $f(x) : B(x)$.
+So dependent function types are just like non-dependent function types,
+except that the codomain depends on the argument.
+
+Currying works the same for dependent function types as for ordinary function
+types.
+
+In case the dependent type family $B(x) : x : A$ is actually constant,
+that is $B(x)$ does not depend on $x$, then the dependent function type is
+the same as the ordinary function type, that is,
+$$
+   \prod_{x : A} B \equiv A \to B
+$$
+where $\equiv$ means definitionally equal \citepalias[Section~1.1]{hott-book}.
+
+The expression $\prod_{x : A} \Phi$ binds free occurrences of $x$ in $\Phi$.
+Thus we cannot substitute $x$ in this expression without renaming the $x$
+that is already bound in it.  First we rename $x$, and then we substitute.
+
+\subsection{The Empty Type}
+
+The empty type \citepalias[Section~1.7]{hott-book} is the type $0$ having
+no terms.  This type has a formation rule: 0 is a type.
+It has no constructors (rules that make terms).  Thus, in a sense there is
+nothing to do.  There are no programs that satisfy the specification $0$.
+
+But we are not finished with the rules for this type: it has eliminators
+(rules for using terms).
+The recursor for the empty type says for any type $A$ there is an
+inhabited function type $0 \to A$.  Another way to say this is
+$$
+   \recursor_0 : \prod_{C : \universe} (0 \to C)
+$$
+Now this does give us something to compute.  The specification $0 \to C$
+always has one program, the \emph{empty function}, which satisfies it.
+This function has a vacuous rule, if $f : 0 \to C$, then we can evaluate
+$f(x)$ for all $x : 0$ but there are no such $x$.
+
+So we have a function $f : 0 \to C$, which is a program.  But this program
+cannot do anything, we cannot evaluate $f(x)$ because there are no valid
+$x$ that can serve as arguments to this function.
+
+The induction principle for this type says the same thing for
+dependent type families
+$$
+   \inductor_0 : \prod_{C : 0 \to \universe} \prod_{x : 0} C(x)
+$$
+for any dependent type family $C : 0 \to \universe$ there is
+a dependent function type $\prod_{x : 0} C(x)$, which again is the
+empty function having the vacuous rule and no valid arguments.
+
+\subsection{The Unit Type}
+
+The unit type \citepalias[Sections~1.5 and~2.8]{hott-book} is the type 1
+having one term, denoted $\star$.  This type has a formation rule: 1 is a type.
+It has one constructor
+$$
+   \star : 1
+$$
+There is a program $\star$ that satisfies the specification $1$.
+But it doesn't compute anything.  It is just a defined constant
+(the program does not define a constant something-or-other; it is a constant).
+
+The recursor for the unit type says for any inhabited type $C$ there is an
+inhabited function type $1 \to C$.  Another way to say this is
+$$
+   \recursor_1 : \prod_{C : \universe} (C \to 1 \to C)
+$$
+having defining equation
+\begin{equation} \label{eq:recursor-1-definition}
+   \recursor_1(C, c, \star) = c
+\end{equation}
+Decoding this (and getting a bit ahead of ourselves)
+\begin{itemize}
+\item $\recursor_1$ is a dependent product type, hence a function whose
+    argument is the subscript of the $\prod$, that is,
+\item $\recursor_1(C)$
+    is a term of type $C \to 1 \to C$.  And $\to$ is right-associative
+    by default so this means $C \to (1 \to C)$.  Hence
+\item $\recursor_1(C)(c)$ is for $c : C$ a function $1 \to C$.  Hence
+\item $\recursor_1(C)(c)(\star)$ is a term of type $C$ given by
+    \eqref{eq:recursor-1-definition}.
+\item Except for the case $C \equiv 0$ in which case
+    $\recursor_1(C)(c)$ does not exist because there is no $c : 0$.
+    In this case $\recursor_1(0) : 0 \to 1 \to 0$ is inhabited because
+    $1 \to 0$ is equivalent to $0$ (has no terms), so $\recursor_1(0)$ is
+    the empty function.
+\end{itemize}
+In short, for any type $C$ and any $c : C$
+there exists $f : 1 \to C$ defined by $f(\star) = c$.
+The equality of $\recursor_1(C, c, \star)$ and $\recursor_1(C)(c)(\star)$
+is currying.
+
+So we have a function $f : 1 \to C$, which is a program.  And this program
+can do something, we can evaluate $f(\star)$ obtaining $c$.
+
+The induction principle for this type says the same thing for
+dependent type families
+$$
+   \inductor_1 : \prod_{C : 1 \to \universe} C(\star) \to \prod_{x : 1} C(x)
+$$
+with defining equation
+\begin{equation} \label{eq:inductor-1-definition}
+   \inductor_1(C, c, \star) = c
+\end{equation}
+So this says for any dependent type family $C(x)$, $x : 1$
+\begin{itemize}
+\item $\inductor_1(C)$ is a function $C(\star) \to \prod_{x : 1} C(x)$.
+    Hence for $c : C(\star)$
+\item $\inductor_1(C)(c)$ is a term of type $\prod_{x : 1} C(x)$.  Hence
+\item $\inductor_1(C)(c)(x)$ is a term of type $C(x)$ given
+    by \eqref{eq:inductor-1-definition}.
+\end{itemize}
+But now this does not make obvious sense, we need a theorem given in
+Section~1.5 of \citetalias{hott-book} that  uses this induction principle.
+Read it as a proof of a theorem rather than a program.
+If we take the case $C(x) :\equiv (x = \star)$, then the induction principle
+says $c : C(\star)$ implies
+$$
+   \prod_{x : 1} (x = \star)
+$$
+So this type has exactly one term $\star$.
+Or, if we take the homotopy reading,
+this space has exactly one path component.
+Thus we have proved (following \citetalias{hott-book}) that this type has only
+one term (up to propositional equality).
+
+Now the principle of indiscernibility of identicals
+\citepalias[Section~1.12]{hott-book} says that $x = \star$ implies that
+$C(x)$ and $C(\star)$ are equivalent types, hence identical types by the
+univalence axiom.
+
+So now if we have the program specification $\prod_{x : 1} C(x)$ and
+$c : C(\star)$, there is a function $f$, which is a program satisfying this
+type satisfying $f(\star) = c$ and also $f(x) = c$ for any $x : 1$.
+And we can execute this function by evaluating $f(x)$ to obtain $c$.
+
+\subsection{Product Types}
+
+For any types $A$ and $B$, there is a product type $A \times B$.
+If this type is inhabited, the inhabitant $p : A \times B$ is an ordered
+pair $(a, b)$ with $a : A$ and $b : B$.
+
+The product type has one constructor.  Given $a : A$ and $b : B$, the
+constructor gives $(a, b) : A \times B$.
+
+The eliminator (recursor) of the product type says that a function
+$f : A \times B \to C$ is defined by currying is definitionally equivalent
+to a function $g : A \to B \to C$ with the equivalence
+being $f((x, y)) = g(x)(y)$.
+
+The dependent eliminator (induction principle) works the same way for
+dependent function types.
+
+As special cases we can derive the projection functions that extract the
+terms that went into the pair.
+\begin{align*}
+   \text{fst} : A \times B \to A
+   \\
+   \text{snd} : A \times B \to B
+\end{align*}
+having the rules
+\begin{align*}
+   \text{fst} : (a, b) \mapsto a
+   \\
+   \text{snd} : (a, b) \mapsto b
+\end{align*}
+
+\begin{thebibliography}{}
+
+\bibitem[Martin-L\"{o}f(1975)]{martin-lof-mltt}
+Martin-L\"{o}f, P. (1975).
+\newblock An intuitionistic theory of types: predicative part.
+\newblock In: H. E. Rose, J. C. Shepherdson (eds.),
+    \emph{Logic Colloquium ‘73, Proceedings of the Logic Colloquium,
+    Studies in Logic and the Foundations of Mathematics}, \textbf{80}, 73--118.
+\newblock Elsevier.
+\newblock \doi{10.1016/S0049-237X(08)71945-1}.
+
+\bibitem[Nordstr\"{o}m, et al.(1990)Nordstr\"{o}m, Petersson,
+    and Smith]{programming-mltt}
+Nordstr\"{o}m, B., Petersson, K., and Smith, J.~M. (1990)
+\newblock Programming in Martin-L\"{o}f's Type Theory: An Introduction.
+\newblock Clarendon Press, New York.
+
+\bibitem[Rijke(2025)]{rijke}
+Rijke, E. (2025).
+\newblock \emph{Introduction to Homotopy Type Theory}.
+\newblock Cambridge University Press.
+\newblock \doi{10.1017/9781108933568}.
+\newblock A preprint is available at
+    \href{https://arxiv.org/abs/2212.11082}{Ar$\chi$iv}.
+
+\bibitem[The Univalent Foundations Program(2013)]{hott-book}
+The Univalent Foundations Program (2013).
+\newblock \emph{Homotopy Type Theory: Univalent Foundations of Mathematics}.
+\newblock Institute for Advanced Study, Princeton, NJ.
+\newblock \url{https://homotopytypetheory.org/book}.
+
+\end{thebibliography}
+
+\end{document}
+

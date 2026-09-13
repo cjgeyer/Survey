@@ -42,7 +42,8 @@ and \citet{rijke}.
 
 For $x, y : A$ we have the identity type $(x =_A y)$ also written
 $\text{Id}_A(x, y)$.  The latter means we can think of $\text{Id}_A$
-as a function $A \to A \to \universe$.
+as a function $A \to A \to \universe$, where $\universe$ denotes
+a universe type \citepalias[Sections~1.3 and~2.10]{hott-book}.
 
 Identity on a type $A$ is an equivalence relation (reflexive, symmetric,
 and transitive), that is, the types
@@ -60,10 +61,10 @@ and transitive), that is, the types
 \end{subequations}
 are all inhabited
 \citepalias[definition of $\refl$ and Lemmas~2.1.1 and~2.1.2]{hott-book}.
-An inhabitant of \eqref{eq:path-reflexivity} is denoted $\refl_x$
+One inhabitant of \eqref{eq:path-reflexivity} is denoted $\refl_x$
 (there may be other inhabitants).
-An inhabitant of \eqref{eq:path-symmetry} is denoted $p \mapsto p^{-1}$.
-An inhabitant of \eqref{eq:path-transitivity}
+One inhabitant of \eqref{eq:path-symmetry} is denoted $p \mapsto p^{-1}$.
+One inhabitant of \eqref{eq:path-transitivity}
 is denoted $(p, q) \mapsto p \cdot q$.
 
 If we think of $A$ as a category, terms of $A$ as objects of the category,
@@ -71,7 +72,8 @@ and terms of $(x =_A y)$ as morphisms from $x$ to $y$, then these morphisms
 satisfy the category axioms with $\refl_x$ being the identity morphism for
 object $x$ and each morphism being iso \citepalias[Lemma~2.1.4]{hott-book}.
 Thus this category is a groupoid.  Actually, this category is
-an $\infty$-groupoid, but this lemma does not assert that.
+an $\infty$-groupoid because it has paths between paths, paths between paths
+between paths, and so forth, ad infinitum.
 
 \subsection{Path Lifting}
 
@@ -119,7 +121,7 @@ $$
    \text{transport}^B(p, \fatdot) \equiv p_{\textstyle *}(\fatdot)
 $$
 There are many other properties related to path lifting in
-Section~2.3 of \citet{hott-book}, but we will skip them for now.
+Section~2.3 of \citetalias{hott-book}, but we will skip them for now.
 
 \section{Homotopies}
 
@@ -160,7 +162,7 @@ we do it.  For \eqref{eq:homotopy-reflexivity}, $x \mapsto \refl_{f(x)}$
 does the job.  For \eqref{eq:homotopy-symmetry}, given $H : (f \sim g)$
 we find $x \mapsto H(x)^{-1}$ does the job.
 For \eqref{eq:homotopy-transitivity}, given $H : (f \sim g)$ and
-$J : (g \to h)$ that $x \mapsto H(x) \cdot J(x)$ is in $(f \sim h)$.
+$J : (g \sim h)$ we find that $x \mapsto H(x) \cdot J(x)$ is in $(f \sim h)$.
 
 For $f, g : A \to B$ and $H : (f \sim g)$ and $p : x =_A y$ we have
 $$
@@ -173,7 +175,7 @@ $\text{ap}_f(p)$ and $\text{ap}_g(p)$
 \section{Homotopy Equivalence}
 
 There are multiple different homotopy equivalent ways to define homotopy
-equivalence.  The point of the univalence axiom is that that they are
+equivalence.  The univalence axiom says they are
 all equally good.  Section~2.4 of \citetalias{hott-book} and Definition~9.2.1
 of \citet{rijke} define homotopy equivalence to be the property of a map
 being \emph{bi-invertible}, that is, for $f : A \to B$
@@ -190,7 +192,7 @@ to be another (homotopy equivalent) property.  It does not matter which
 homotopy equivalent property is used to define homotopy equivalence.
 Hence we take
 $$
-   \isequiv(f) := \biinv(f)
+   \isequiv(f) :\equiv \biinv(f)
 $$
 
 A related definition is \emph{quasi-inverse:} for $f : A \to B$
@@ -199,7 +201,7 @@ $$
    (f \circ g \sim \idfun_B) \times (g \circ f \sim \idfun_A)
 $$
 \citepalias[equation~(2.4.5)]{hott-book}.
-This, it turns out, is not a mere property
+This, it turns out, is not a mere proposition
 \citepalias[Theorem~4.1.3]{hott-book} and also not satisfactory for
 defining the univalence axiom
 \citepalias[Exercise~4.6]{hott-book}.
@@ -283,6 +285,10 @@ $$
 We still have to do the case where $\biinv(f)$ is not inhabited,
 but it is again trivial.
 
+\section{Transport Across Univalence}
+
+Suppose we have established $A \simeq B$ hence by univalence $A =_\universe B$.
+What do we get from that?
 
 \begin{thebibliography}{}
 
