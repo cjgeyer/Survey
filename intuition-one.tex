@@ -1,0 +1,125 @@
+
+\documentclass[11pt]{article}
+
+\usepackage{amsmath}
+\usepackage{natbib}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\usepackage{doi}
+\usepackage{url}
+
+\begin{document}
+
+\title{Constructive Logic and Truth}
+
+\author{Charles J. Geyer}
+
+\maketitle
+
+This about the mistake in the document about what one can prove constructively.
+
+First we discuss triple negation reduction.  For all $P$ we have
+$$
+   \neg \neg \neg P \to \neg P
+$$
+is provable constructively
+(for all $P$ not just $P$ that are mere propositions).
+\citep[Exercise~1.11 in][hereinafter referred to as the HoTT book]{hott-book}.
+\defcitealias{hott-book}{HoTT book}
+
+This means if we think of the infinite sequence of statements
+\begin{gather*}
+   P
+   \\
+   \neg P
+   \\
+   \neg \neg P
+   \\
+   \neg \neg \neg P
+   \\
+   \neg \neg \neg \neg P
+   \\
+   \vdots
+\end{gather*}
+all but the first three logically imply one of the first three.
+
+In fact, all but the first three are logically equivalent to the first three
+because
+$$
+   P \to \neg \neg P
+$$
+is also provable constructively.
+
+The question now arises whether for any $P$ we can prove something other
+than
+\begin{gather*}
+   P
+   \\
+   \neg P
+   \\
+   \neg \neg P
+\end{gather*}
+The law of noncontradiction, also provable constructively
+\citep[Section~1.1]{bauer-constructive}, says for all $P$
+\begin{equation} \label{eq:noncontradiction}
+   \neg ((\neg P) \times (\neg \neg P))
+\end{equation}
+
+And this is where I stumbled.  There is no proposition $P$ that is neither
+true nor false, but that does not mean that we can constructively prove which
+(that would be excluded middle if it were true for all $P$).
+Similarly, there is no $P$ such that $\neg P$ is neither true nor false,
+but that does not mean that we can constructively prove which
+(that would be the erroneous statement asserted in Section 6
+of \citet{geyer-survey} if it were true for all $P$).
+
+There is also the double negation of the law if excluded middle,
+which Roy Cook brought up in the FIG discussion (and which is
+Exercise~{1.13} in the \citet{hott-book}): for all mere propositions $P$
+\begin{equation} \label{eq:double-negation-lem}
+   \neg \neg (P + (\neg P))
+\end{equation}
+Probably \eqref{eq:noncontradiction} and \eqref{eq:double-negation-lem}
+have some relationship, but at this point I am not going to try to guess.
+
+The \citet[pp.~43-44]{hott-book} does discuss de Morgan's laws,
+noting that
+\begin{gather*}
+   (\neg A) \times (\neg B) \to \neg (A + B)
+   \\
+   \neg (A + B) \to (\neg A) \times (\neg B)
+\end{gather*}
+are constructively provable (so each is an if and only if) but other classical
+principles like
+$$
+   (\neg (A + B)) \to ((\neg A) \times (\neg B))
+$$
+are not constructively provable.
+
+
+\begin{thebibliography}{}
+
+\bibitem[Bauer(2017)]{bauer-constructive}
+Bauer, A. (2017).
+\newblock Five stages of accepting constructive mathematics.
+\newblock \emph{Bulletin (New Series) of the American Mathematical Society},
+    \textbf{54}, 481--498.
+\newblock \doi{10.1090/bull/1556}.
+
+\bibitem[Geyer(2026)]{geyer-survey}
+Geyer, C.~J. (2026),
+\newblock On generalizations of equality, logic, and set theory in
+    mathematics of the past century.
+\newblock \url{https://github.com/cjgeyer/Survey}.
+\newblock Read by the Foundations Interest Group of the Minnesota Center
+    for Philosophy of Science October 1, 2026.
+
+\bibitem[The Univalent Foundations Program(2013)]{hott-book}
+The Univalent Foundations Program (2013).
+\newblock \emph{Homotopy Type Theory: Univalent Foundations of Mathematics}.
+\newblock Institute for Advanced Study, Princeton, NJ.
+\newblock \url{https://homotopytypetheory.org/book}.
+
+\end{thebibliography}
+
+\end{document}
+
