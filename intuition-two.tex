@@ -1,0 +1,256 @@
+
+\documentclass[11pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{indentfirst}
+\usepackage{natbib}
+\usepackage[colorlinks=true,allcolors=blue]{hyperref}
+\usepackage{doi}
+\usepackage{url}
+
+\DeclareMathOperator{\iscontr}{isContr}
+\DeclareMathOperator{\isprop}{isProp}
+\DeclareMathOperator{\isset}{isSet}
+\DeclareMathOperator{\idtype}{Id}
+
+\newcommand{\universe}{\mathcal{U}}
+
+\let\emptyset=\varnothing
+
+\newtheorem{theorem}{Theorem}
+
+\begin{document}
+
+\title{More on Identity Types}
+
+\author{Charles J. Geyer}
+
+\maketitle
+
+\section{Introduction}
+
+This is about the ``argument'' (in scare quotes) that Roy Cook and I had
+in the FIG (Foundations Interest Group of the Minnesota Center for Philosophy
+of Science) discussion of \citet{geyer-survey}.
+
+It seems I need to make a few points about identity types that I either omitted
+from the discussed paper or did not emphasize enough.
+
+\section{Mere Propositions}
+
+A type $A$ is a \emph{proposition} if
+\begin{equation} \label{eq:isProp}
+  \isprop(A) :\equiv \prod_{x, y : A} \idtype_A(x, y) 
+\end{equation}
+\citep[Definition~3.3.1 in][hereinafter referred to as the
+HoTT book]{hott-book}) \citep[Section~8.3]{geyer-survey}.
+\defcitealias{hott-book}{HoTT book}
+The \citetalias{hott-book} often uses \emph{mere proposition} to emphasize that
+they are using this concept, but, strictly speaking, the ``mere'' is
+superfluous.
+
+We can read this as $A$ has at most one term if we are giving this the usual
+reading in propositions-as-types, that is,
+$$
+   \forall_{x : A} \forall_{y : A} (x = y)
+$$
+But the homotopy-theoretic reading is that $A$ has at most one
+\emph{path component:} it is either the empty space or a path connected space.
+
+(Mere) propositions are not the lowest level of the homotopy level hierarchy.
+Below is types satisfying
+\begin{equation} \label{eq:isContr}
+   \iscontr(A) :\equiv \sum_{x : A} \prod_{y : A} \idtype_A(x, y)
+\end{equation}
+the propositions-as-types reading for this being
+$$
+   \exists_{x : A} \forall_{y : A} (x = y)
+$$
+These are (the homotopy-theoretic reading) the \emph{contractible spaces}
+or (the sets-as-types reading) the singleton sets.
+
+Note an interesting curiosity, the ZFC hierarchy begins $\emptyset$,
+$\{\emptyset\}$, $\ldots,$ where there is nothing special about the particular
+singleton set chosen to be the second level of the hierarchy.
+In contrast, the HoTT hierarchy \citepalias[Chapter~7]{hott-book}
+\citep[Section~8.11]{geyer-survey} starts with contractible types (singleton
+sets) and the next level is (mere) propositions (subsingleton sets).
+So the hierarchies are sort of reversed.  But also the next level of the
+HoTT hierarchy is (mere) sets, which includes the whole universe of
+(HoTT) sets.
+
+We emphasize the following, which was not emphasized enough in
+\citet{geyer-survey}, which is Lemma~{3.3.2} in the \citetalias{hott-book}.
+\begin{theorem} \label{th:prop}
+If $A$ is an inhabited (true) (mere) proposition, then $A \simeq 1$.
+\end{theorem}
+That is, $A$ is (homotopy) equivalent to the type $1$.
+Hence by univalence $A =_\universe 1$.
+
+Of course, there are also (mere) propositions that are not inhabited (false).
+Those are (homotopy) equivalent to the type $0$.
+
+\section{How Identity Types Work}
+
+\subsection{Contractible Types}
+
+If $\iscontr(A)$, then $A \simeq 1$.  This follows from
+Theorem~\ref{th:prop} because all contractible types are inhabited.
+
+Hence $x, y : A$ implies $x =_A y$.  $A$ has exactly one point.
+
+\subsection{(Mere) Propositions}
+
+If $\isprop(A)$, then either $A \simeq 1$, in which case we say it is
+true or $A \simeq 0$, in which case we say it is false.
+
+Considered as sets, these are subsingleton sets (either singleton or empty).
+
+\subsection{(Mere) Sets}
+
+A type $A$ is a \emph{set} if
+\begin{equation} \label{eq:isSet}
+  \isset(A) :\equiv \prod_{x, y : A} \prod_{p, q : \idtype_A(x, y)}
+  \idtype_{\idtype_A(x, y)}(p, q)
+\end{equation}
+\citepalias[Definition~{3.1.1} in the]{hott-book})
+\citep[Section~8.3]{geyer-survey}.
+I sometimes say \emph{mere set} to emphasize that
+we are using this concept, but, strictly speaking, the ``mere'' is
+superfluous.
+
+So here again equality (identity types) behave as one intuits from classical
+logic.  If $A$ is a (mere) set and $x, y : A$, then $x = y$ may be true
+(inhabited) or false (not inhabited), but that is all that needs to be said.
+Another way to say this is that $\idtype_A(x, y)$ is a mere proposition
+so works the way one expects by analogy with classical logic.
+
+Read homotopy-theoretically, of course, we do not think of the elements (terms)
+of a (mere) set (type $A$ satisfying $\isset(A)$) as points in a space but
+as path-connected components.  But that is just a change in language rather
+than a change in the mathematics.
+
+\subsection{Anima}
+
+As \citet{geyer-survey} emphasizes a general type $A$ may be an \emph{anima}
+(also called weak $\infty$-groupoid) in that it may have nontrivial paths,
+paths between paths, paths between paths between paths, and so forth
+ad infinitum.
+
+This (something \citet{geyer-survey} did not emphasize) comes from
+\emph{coinduction:} identity types are types.
+
+But (another thing \citet{geyer-survey} did not emphasize and should have)
+if we ever get to a level where an identity type is contractible, then there
+is no higher-level nontrivial homotopy information.
+\begin{theorem} \label{th:cut}
+If $x, y : 1$, then $\idtype_1(x, y) \simeq 1$.
+\end{theorem}
+This is Theorem~{2.8.1} in the \citetalias{hott-book}.
+It is an important contribution of Voevodsky.
+
+The feeling that equalities are not behaving the way you intuit can stop
+at any (homotopy) level.  Any time you get a contractible type, whether
+this is the type you started with, or an identity type thereof, or an
+identity type of an identity type, or an identity type of an identity
+type of an identitiy type, or with arbitrarily many repetitions of 
+an identity type of, then you are done.  There is nothing interesting
+in any higher-level identity types.
+
+\begin{thebibliography}{}
+
+\bibitem[Geyer(2026)]{geyer-survey}
+Geyer, C.~J. (2026),
+\newblock On generalizations of equality, logic, and set theory in
+    mathematics of the past century.
+\newblock \url{https://github.com/cjgeyer/Survey}.
+\newblock Read by the Foundations Interest Group of the Minnesota Center
+    for Philosophy of Science October 1, 2026.
+
+\bibitem[Hofmann and Streicher(1998)]{hofmann-streicher}
+Hofmann, M., and Streicher, T. (1998).
+\newblock The groupoid interpretation of type theory.
+\newblock In G. Sambin and J.~M. Smith, (eds.),
+    \emph{Twenty-five years of constructive type theory (Venice, 1995)}.
+\newblock Oxford Logic Guides, \textbf{36}, 83--111.
+\newblock Oxford University Press, New York.
+\newblock \doi{10.1093/oso/9780198501275.003.0008}.
+
+\bibitem[Martin-L\"{o}f(1975)]{martin-lof-mltt}
+Martin-L\"{o}f, P. (1975).
+\newblock An intuitionistic theory of types: predicative part.
+\newblock In: H. E. Rose, J. C. Shepherdson (eds.),
+    \emph{Logic Colloquium ‘73, Proceedings of the Logic Colloquium,
+    Studies in Logic and the Foundations of Mathematics}, \textbf{80}, 73--118.
+\newblock Elsevier.
+\newblock \doi{10.1016/S0049-237X(08)71945-1}.
+
+\bibitem[The Univalent Foundations Program(2013)]{hott-book}
+The Univalent Foundations Program (2013).
+\newblock \emph{Homotopy Type Theory: Univalent Foundations of Mathematics}.
+\newblock Institute for Advanced Study, Princeton, NJ.
+\newblock \url{https://homotopytypetheory.org/book}.
+
+\end{thebibliography}
+
+\end{document}
+
+This about the mistake in the document about what one can prove constructively.
+
+First we discuss triple negation reduction.  For all $P$ we have
+$$
+   \neg \neg \neg P \to \neg P
+$$
+is provable constructively
+(for all $P$ not just $P$ that are mere propositions).
+\citep[Exercise~1.11 in][hereinafter referred to as the HoTT book]{hott-book}.
+\defcitealias{hott-book}{HoTT book}
+
+This means if we think of the infinite sequence of statements
+\begin{gather*}
+   P
+   \\
+   \neg P
+   \\
+   \neg \neg P
+   \\
+   \neg \neg \neg P
+   \\
+   \neg \neg \neg \neg P
+   \\
+   \vdots
+\end{gather*}
+all but the first three logically imply one of the first three.
+
+In fact, all but the first three are logically equivalent to the first three
+because
+$$
+   P \to \neg \neg P
+$$
+is also provable constructively.
+
+The question now arises whether for any $P$ we can prove something other
+than
+\begin{gather*}
+   P
+   \\
+   \neg P
+   \\
+   \neg \neg P
+\end{gather*}
+The law of noncontradiction, also provable constructively
+\citep[Section~1.1]{bauer-constructive}, says for all $P$
+$$
+   \neg ((\neg P) \times (\neg \neg P))
+$$
+
+And this is where I stumbled.  There is no proposition $P$ that is neither
+true nor false, but that does not mean that we can constructively prove which
+(that would be excluded middle if it were true for all $P$).
+Similarly, there is no $P$ such that $\neg P$ is neither true nor false,
+but that does not mean that we can constructively prove which
+(that would be the erroneous statement asserted in Section 6
+of \citet{geyer-survey} if it were true for all $P$).
+

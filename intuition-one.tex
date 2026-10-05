@@ -17,12 +17,13 @@
 
 This about the mistake in the document about what one can prove constructively.
 
-First we discuss triple negation reduction.  For all $P$ we have
+First we discuss triple negation reduction.
 $$
-   \neg \neg \neg P \to \neg P
+   \forall P (\neg \neg \neg P \to \neg P)
 $$
 is provable constructively
-(for all $P$ not just $P$ that are mere propositions).
+(for all $P$ not just $P$ that are mere propositions, trivial because
+$\neg P$ is a mere proposition even if $P$ is not)
 \citep[Exercise~1.11 in][hereinafter referred to as the HoTT book]{hott-book}.
 \defcitealias{hott-book}{HoTT book}
 
@@ -42,13 +43,6 @@ This means if we think of the infinite sequence of statements
 \end{gather*}
 all but the first three logically imply one of the first three.
 
-In fact, all but the first three are logically equivalent to the first three
-because
-$$
-   P \to \neg \neg P
-$$
-is also provable constructively.
-
 The question now arises whether for any $P$ we can prove something other
 than
 \begin{gather*}
@@ -58,43 +52,30 @@ than
    \\
    \neg \neg P
 \end{gather*}
-The law of noncontradiction, also provable constructively
-\citep[Section~1.1]{bauer-constructive}, says for all $P$
+And this is where I stumbled, making the error that Roy Cook pointed out.
+
+What is true is that one cannot prove anything else (that something equivalent
+to one of these three).  \citet{geyer-survey} does say this.
+But then it goes off the rails asserting that one of the three can always
+be proved, but that is not the way constructive mathematics works.  You
+might not be able to prove any of these.
+
+Roy Cook mentioned the double negation of LEM is constructively
+provable (this is Exercise~{1.13} in the \citetalias{hott-book})
+\begin{equation} \label{eq:double-negation-lem}
+   \forall P (\neg \neg (P + (\neg P)))
+\end{equation}
+By the part of De Morgan's laws that are provable constructively
+\citepalias[pp.~43-44]{hott-book}, this is equivalent to the
+law of noncontradiction
+\citep[Section~1.1]{bauer-constructive}
 \begin{equation} \label{eq:noncontradiction}
    \neg ((\neg P) \times (\neg \neg P))
 \end{equation}
 
-And this is where I stumbled.  There is no proposition $P$ that is neither
-true nor false, but that does not mean that we can constructively prove which
-(that would be excluded middle if it were true for all $P$).
-Similarly, there is no $P$ such that $\neg P$ is neither true nor false,
-but that does not mean that we can constructively prove which
-(that would be the erroneous statement asserted in Section 6
-of \citet{geyer-survey} if it were true for all $P$).
-
-There is also the double negation of the law if excluded middle,
-which Roy Cook brought up in the FIG discussion (and which is
-Exercise~{1.13} in the \citet{hott-book}): for all mere propositions $P$
-\begin{equation} \label{eq:double-negation-lem}
-   \neg \neg (P + (\neg P))
-\end{equation}
-Probably \eqref{eq:noncontradiction} and \eqref{eq:double-negation-lem}
-have some relationship, but at this point I am not going to try to guess.
-
-The \citet[pp.~43-44]{hott-book} does discuss de Morgan's laws,
-noting that
-\begin{gather*}
-   (\neg A) \times (\neg B) \to \neg (A + B)
-   \\
-   \neg (A + B) \to (\neg A) \times (\neg B)
-\end{gather*}
-are constructively provable (so each is an if and only if) but other classical
-principles like
-$$
-   (\neg (A + B)) \to ((\neg A) \times (\neg B))
-$$
-are not constructively provable.
-
+So it is not possible to prove anything other than $P$ or $\neg P$
+or $\neg\neg P$ or something that implies one of them (but it is also
+possible that you cannot prove any of them).
 
 \begin{thebibliography}{}
 

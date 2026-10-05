@@ -397,24 +397,48 @@ much more complicated if based on equality-in-the-logic and set theory.
 In constructive mathematics, which is mathematics that does
 not use the law of excluded middle (LEM) anywhere, putting equality
 in the logic no longer works well.  LEM says that for any proposition $P$,
-either $P$ or not $P$, that is, $\forall P, P \vee \neg P$.
+either $P$ or not $P$, that is, $\forall P (P \vee \neg P)$.
 A constructively provable equivalent to LEM is double negation
-removal $\forall P, \neg \neg P \to P$.
-When applied to negated propositions, LEM and double negation removal
-are constructively valid (provable without LEM), that is,
-\begin{align*}
-   & \forall P, (\neg P) \vee (\neg \neg P)
+removal $\forall P (\neg \neg P \to P)$.
+That is, LEM and double negation removal are constructively equivalent,
+but neither is constructively provable.
+
+Something that is constructively provable is triple negation simplification
+$$
+   \forall P (\neg \neg \neg P \to \neg P)
+$$
+that is, double negatives can be removed but only from triple negatives.
+Thus when we consider the infinite sequence of propositions
+\begin{gather*}
+   P
    \\
-   & \forall P, (\neg \neg \neg P) \to (\neg P)
-\end{align*}
-are both rules of constructive mathematics.\footnote{Although
-constructive logic has the same truth values (true and false) as classical
-logic, it does have three \emph{proof values}.  You either can prove $P$ or
-you cannot, and in the latter case you can prove either $\neg P$
-or $\neg\neg P$.  But ``proof values'' does not seem to be a technical term
-anyone uses.}
-Thus if we want to talk about
-$x$ and $y$, the propositions
+   \neg P
+   \\
+   \neg \neg P
+   \\
+   \neg \neg \neg P
+   \\
+   \neg \neg \neg \neg P
+   \\
+   \vdots
+\end{gather*}
+all but the first three logically imply one of the first three.
+So that leaves us with
+\begin{gather*}
+   P
+   \\
+   \neg P
+   \\
+   \neg \neg P
+\end{gather*}
+as things we might attempt to prove about $P$ in constructive mathematics.
+These are not mutually exclusive since
+$$
+   \forall P (P \to \neg \neg P)
+$$
+is constructively valid (but as we said above, not the reverse implication).
+
+When the $P$ in question is an identity type, we have the same issues.
 \begin{align*}
    & x = y
    \\
