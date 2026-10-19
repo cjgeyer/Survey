@@ -15,6 +15,7 @@
 \usepackage{doi}
 \usepackage{tikz-cd}
 
+\DeclareMathOperator{\idtype}{Id}
 \DeclareMathOperator{\idfun}{id}
 \DeclareMathOperator{\isContr}{isContr}
 \DeclareMathOperator{\isProp}{isProp}
@@ -45,6 +46,7 @@
 \newcommand{\real}{\mathbb{R}}
 \newcommand{\universe}{\mathcal{U}}
 \newcommand{\rats}{\mathbb{Q}}
+\newcommand{\interval}{\mathbb{I}}
 
 \newcommand{\fatdot}{\,\cdot\,}
 
@@ -1133,7 +1135,12 @@ They are just always there for any terms of any types.
 And they have the properties
 given them by the rules of the type and no other properties.\footnote{Identity
 types also have rules (Section~\ref{sec:path-induction} below).  So there
-are rules not only for type $A$ but also for type $(x =_A y)$.}
+are rules not only for type $A$ but also for type $(x =_A y)$.}$^,$\footnote{In
+cubical type theory, which is a model for HoTT developed by
+\citet{bezem-coquand-huber} and later authors, paths of type $A$ are functions
+$\interval \to A$ but $\interval$ is a synthetic type, not defined in terms
+of anything else and, in particular, not as in interval of real numbers.
+See footnote~\ref{foot:cubical} for the point of cubical type theory.}
 
 Sometimes, like in the rest of math, we will omit the subscript on the
 equals sign, writing $x = y$ instead of $x =_A y$, when the type
@@ -1714,7 +1721,7 @@ Voevodsky constructed was a model of HoTT with univalence in set theory.
 Hence these theories are equiconsistent.  \citet*{bezem-coquand-huber}
 constructed a model of HoTT with univalence in a constructive type theory.
 So Voevodsky used the axiom of choice, but \citet{bezem-coquand-huber}
-did not, nor even LEM.}
+did not, nor even LEM.\label{foot:cubical}}
 to assume as an axiom that this function is an equivalence
 $$
    (A =_\universe B) \simeq (A \simeq B)
@@ -1893,6 +1900,18 @@ for $x : A$ and $p : x =_A x$ we have $p = \refl_x$.
 We stress that HoTT assumes none of UIP or Axiom K or all types are sets.
 The whole point of HoTT is not to dumb down MLTT to only do mathematics
 as it was understood in 1900.
+
+An important property of homotopy levels is that they have no nontrivial
+homotopies above their level.  If $\isContr(A)$ and $x, y : A$, then
+$\isContr\bigl(\idtype_A(x, y)\bigr)$
+\citepalias[Theorem~2.8.1 and Lemma~3.11.3 and univalence]{hott-book}.
+Of course, if $A$ is empty, then it has no identity types $\idtype_A()$.
+
+Thus going up the hierarchy of identity types, identity types of identity
+types, and so forth, whenever we hit one that is empty or contractible there
+is no interesting homotopy information above it.
+Homotopy $n$-types are defined to have contractible identity types at level
+$n$, so they have no interesting homotopy information above level $n$.
 
 \subsection{The Natural Numbers and Finiteness}
 \label{sec:nats}
